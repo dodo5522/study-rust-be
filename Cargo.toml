@@ -33,6 +33,7 @@ argon2 = "0.4"
 
 # helper for UUIDs if needed
 uuid = { version = "1", features = ["serde", "v4"] }
+anyhow = "1.0.100"
 
 [profile.dev]
 opt-level = 0
