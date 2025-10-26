@@ -1,6 +1,6 @@
 use dotenvy::var;
 
-use study_rust_be::get_router;
+use be_presentation::get_router;
 
 #[tokio::main]
 async fn main() {
@@ -10,7 +10,7 @@ async fn main() {
     }
 }
 
-/// Run the application server.
+/// Run the be-application server.
 async fn run() -> anyhow::Result<()> {
     let bind_addr = var("BIND_ADDR")?;
     let bind_port = var("BIND_PORT")?;

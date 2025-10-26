@@ -1,0 +1,11 @@
+[package]
+name = "be-presentation"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+tokio.workspace = true
+axum.workspace = true
+anyhow.workspace = true
+dotenvy.workspace = true
+serde.workspace = true

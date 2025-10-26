@@ -1,10 +1,13 @@
-[package]
-name = "study-rust-be"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+members = [".", "be-domain", "be-infrastructure", "be-presentation", "be-use-case"]
+resolver = "2"
 
-[dependencies]
-axum = { version = "0.8" }
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+
+[workspace.dependencies]
+axum = { version = "0.8.6" }
 tokio = { version = "1.47.2", features = ["rt-multi-thread", "macros"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
@@ -14,5 +17,25 @@ tracing-subscriber = { version = "0.3" }
 uuid = { version = "1.18", features = ["serde", "v4"] }
 anyhow = { version = "1.0" }
 
+[package]
+name = "study-rust-be"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+be-domain = {path = "./be-domain" }
+be-infrastructure = {path = "./be-infrastructure" }
+be-use-case = {path = "./be-use-case" }
+be-presentation = {path = "./be-presentation" }
+tokio.workspace = true
+axum.workspace = true
+anyhow.workspace = true
+dotenvy.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
 [profile.dev]
 opt-level = 0
+
+[profile.release]
+opt-level = "s"
