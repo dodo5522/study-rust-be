@@ -2,15 +2,16 @@ version: "3.8"
 
 services:
   db:
-    image: postgres:15
+    image: postgres:18.0-trixie
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: app_db
+      POSTGRES_DB: app_dev
     ports:
       - "5432:5432"
     volumes:
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./docker/postgres.conf:/etc/postgresql/postgresql.conf:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
