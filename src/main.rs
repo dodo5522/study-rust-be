@@ -1,7 +1,7 @@
 use dotenvy::var;
 
-use be_infrastructure::db::get_connection;
-use be_presentation::get_router;
+use layer_infrastructure_db::get_connection;
+use layer_presentation::get_router;
 
 #[tokio::main]
 async fn main() {

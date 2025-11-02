@@ -1,5 +1,5 @@
 [workspace]
-members = [".", "be-domain", "be-infrastructure", "be-presentation", "be-use-case", "migration"]
+members = [".", "layers/*", "migration"]
 resolver = "2"
 
 [workspace.package]
@@ -23,10 +23,10 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
-be-domain = {path = "./be-domain" }
-be-infrastructure = {path = "./be-infrastructure" }
-be-use-case = {path = "./be-use-case" }
-be-presentation = {path = "./be-presentation" }
+layer-domain = {path = "layers/domain" }
+layer-infrastructure-db = {path = "layers/infrastructure-db" }
+layer-use-case = {path = "layers/use-case" }
+layer-presentation = {path = "layers/presentation" }
 tokio.workspace = true
 axum.workspace = true
 anyhow.workspace = true
