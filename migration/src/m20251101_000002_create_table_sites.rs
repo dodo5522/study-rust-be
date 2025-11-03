@@ -1,6 +1,7 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
 use super::consts::SCHEMA_SPEC;
+use super::iden::site::Sites;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -54,11 +55,4 @@ impl MigrationTrait for Migration {
                     .to_owned())
             .await
     }
-}
-
-enum Sites {
-    Schema,
-    Table,
-    Id,
-    DeviceType,
 }

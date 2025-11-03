@@ -1,6 +1,7 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
 use super::consts::SCHEMA_SPEC;
+use super::iden::{cell::Cells, site::Sites};
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -14,6 +15,7 @@ impl Iden for Cells {
                 Self::Schema => SCHEMA_SPEC,
                 Self::Table => "cells",
                 Self::Id => "id",
+                Self::SiteId => "site_id",
                 Self::DeviceType => "device_type",
                 Self::Frequency => "frequency",
             }
@@ -31,9 +33,21 @@ impl MigrationTrait for Migration {
                     .table((Cells::Schema, Cells::Table))
                     .if_not_exists()
                     .col(string(Cells::Id))
+                    .col(string(Cells::SiteId))
                     .col(string(Cells::DeviceType))
                     .col(float(Cells::Frequency))
-                    .primary_key(Index::create().col(Cells::Id))
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk-cells-site-id")
+                            .from((Cells::Schema, Cells::Table), Cells::SiteId)
+                            .to((Sites::Schema, Sites::Table), Sites::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                    )
+                    .primary_key(
+                        Index::create()
+                            .col(Cells::Id)
+                            .col(Cells::Frequency)
+                            .col(Cells::SiteId))
                     .to_owned(),
             )
             .await
@@ -50,12 +64,4 @@ impl MigrationTrait for Migration {
 
         Ok(())
     }
-}
-
-enum Cells {
-    Schema,
-    Table,
-    Id,
-    DeviceType,
-    Frequency,
 }

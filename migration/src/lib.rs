@@ -1,6 +1,7 @@
 pub use sea_orm_migration::prelude::*;
 
 mod consts;
+mod iden;
 mod m20251101_000001_create_schemas;
 mod m20251101_000002_create_table_sites;
 mod m20251101_000003_create_table_cells;
