@@ -1,6 +1,6 @@
 use dotenvy::var;
 
-use layer_infrastructure_db::get_connection;
+use layer_infra_db::get_connection;
 use layer_presentation::get_router;
 
 #[tokio::main]

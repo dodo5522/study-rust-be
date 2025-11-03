@@ -1,5 +1,5 @@
 [package]
-name = "layer-infrastructure-db"
+name = "layer-infra-db"
 version.workspace = true
 edition.workspace = true
 
