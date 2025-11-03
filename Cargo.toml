@@ -1,5 +1,5 @@
 [workspace]
-members = [".", "layers/*", "migration"]
+members = [".", "layers/*"]
 resolver = "2"
 
 [workspace.package]
@@ -24,7 +24,7 @@ edition.workspace = true
 
 [dependencies]
 layer-domain = {path = "layers/domain" }
-layer-infrastructure-db = {path = "layers/infrastructure-db" }
+layer-infra-db = {path = "layers/infra-db" }
 layer-use-case = {path = "layers/use-case" }
 layer-presentation = {path = "layers/presentation" }
 tokio.workspace = true

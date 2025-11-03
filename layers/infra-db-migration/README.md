@@ -2,40 +2,40 @@
 
 - Generate a new migration file
     ```sh
-    cargo run -- generate MIGRATION_NAME
+    sea-orm-cli migrate -d ./layers/infra-db-migration generate 'create junction table for sites and devices'
     ```
 - Apply all pending migrations
     ```sh
-    cargo run
+    cargo run -p infra-db-migration
     ```
     ```sh
-    cargo run -- up
+    cargo run -p infra-db-migration -- up
     ```
 - Apply first 10 pending migrations
     ```sh
-    cargo run -- up -n 10
+    cargo run -p infra-db-migration -- up -n 10
     ```
 - Rollback last applied migrations
     ```sh
-    cargo run -- down
+    cargo run -p infra-db-migration -- down
     ```
 - Rollback last 10 applied migrations
     ```sh
-    cargo run -- down -n 10
+    cargo run -p infra-db-migration -- down -n 10
     ```
 - Drop all tables from the database, then reapply all migrations
     ```sh
-    cargo run -- fresh
+    cargo run -p infra-db-migration -- fresh
     ```
 - Rollback all applied migrations, then reapply all migrations
     ```sh
-    cargo run -- refresh
+    cargo run -p infra-db-migration -- refresh
     ```
 - Rollback all applied migrations
     ```sh
-    cargo run -- reset
+    cargo run -p infra-db-migration -- reset
     ```
 - Check the status of all migrations
     ```sh
-    cargo run -- status
+    cargo run -p infra-db-migration -- status
     ```
