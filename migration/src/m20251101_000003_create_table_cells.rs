@@ -1,5 +1,7 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
+use super::consts::SCHEMA_SPEC;
+
 #[derive(DeriveMigrationName)]
 pub struct Migration;
 
@@ -9,7 +11,7 @@ impl Iden for Cells {
             s,
             "{}",
             match self {
-                Self::Schema => "spec",
+                Self::Schema => SCHEMA_SPEC,
                 Self::Table => "cells",
                 Self::Id => "id",
                 Self::DeviceType => "device_type",
@@ -28,9 +30,10 @@ impl MigrationTrait for Migration {
                 Table::create()
                     .table((Cells::Schema, Cells::Table))
                     .if_not_exists()
-                    .col(pk_auto(Cells::Id))
+                    .col(string(Cells::Id))
                     .col(string(Cells::DeviceType))
-                    .col(string(Cells::Frequency))
+                    .col(float(Cells::Frequency))
+                    .primary_key(Index::create().col(Cells::Id))
                     .to_owned(),
             )
             .await
