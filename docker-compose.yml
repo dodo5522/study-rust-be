@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   db:
+    container_name: study-rust-be-db
     image: postgres:18.0-trixie
     environment:
       POSTGRES_USER: postgres
@@ -10,10 +11,35 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-      - ./docker/postgres.conf:/etc/postgresql/postgresql.conf:ro
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./docker/db/postgres.conf:/etc/postgresql/postgresql.conf:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [
+        "CMD-SHELL",
+        "pg_isready -U postgres",
+      ]
       interval: 5s
       timeout: 5s
       retries: 10
+
+  backend:
+    container_name: study-rust-be
+    build:
+      context: .
+      dockerfile: ./docker/backend-dev/Dockerfile
+    working_dir:
+      /tmp/backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: app_dev
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      BIND_PORT: 8000
+      BIND_ADDR: 0.0.0.0
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - .:/tmp/backend
