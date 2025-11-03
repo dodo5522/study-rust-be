@@ -11,7 +11,7 @@ async fn main() {
     }
 }
 
-/// Run the be-application server.
+/// Run the application server.
 async fn run() -> anyhow::Result<()> {
     let bind_addr = var("BIND_ADDR")?;
     let bind_port = var("BIND_PORT")?;
