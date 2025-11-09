@@ -1,30 +1,9 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
-use super::iden::SCHEMA_SPEC;
 use super::iden::spec::Devices;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
-
-impl Iden for Devices {
-    fn unquoted(&self, s: &mut dyn std::fmt::Write) {
-        write!(
-            s,
-            "{}",
-            match self {
-                Self::Schema => SCHEMA_SPEC,
-                Self::Table => "devices",
-                Self::Id => "id",
-                Self::Type => "type",
-                Self::CpuMhz => "cpu_mhz",
-                Self::MemoryMb => "memory_mb",
-                Self::StorageGb => "storage_gb",
-                _ => panic!("Unsupported column"),
-            }
-        )
-        .unwrap();
-    }
-}
 
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {

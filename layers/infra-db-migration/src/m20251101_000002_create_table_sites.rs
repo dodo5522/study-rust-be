@@ -1,30 +1,9 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
-use super::iden::SCHEMA_SPEC;
 use super::iden::spec::Sites;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
-
-impl Iden for Sites {
-    fn unquoted(&self, s: &mut dyn std::fmt::Write) {
-        write!(
-            s,
-            "{}",
-            match self {
-                Self::Schema => SCHEMA_SPEC,
-                Self::Table => "sites",
-                Self::Id => "id",
-                Self::Name => "name",
-                Self::Address => "address",
-                Self::Longitude => "longitude",
-                Self::Latitude => "latitude",
-                _ => panic!("Unsupported column"),
-            }
-        )
-        .unwrap();
-    }
-}
 
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
