@@ -14,9 +14,10 @@ services:
       - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
       - ./docker/db/postgres.conf:/etc/postgresql/postgresql.conf:ro
     healthcheck:
-      test:
-        - "CMD-SHELL"
-        - "pg_isready -U postgres"
+      test: [
+        "CMD-SHELL",
+        "pg_isready -U postgres",
+      ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -42,15 +43,16 @@ services:
       - db
     volumes:
       - .:/tmp/backend
-    command:
-      - cargo-watch
-      - --delay
-      - "1"
-      - --watch
-      - ./Cargo.toml
-      - --watch
-      - ./src
-      - --watch
-      - ./layers
-      - -x
-      - run
+    command: [
+      "cargo-watch",
+      "--delay",
+      "1",
+      "--watch",
+      "./Cargo.toml",
+      "--watch",
+      "./src",
+      "--watch",
+      "./layers",
+      "-x",
+      "'run'",
+    ]
