@@ -38,4 +38,7 @@ tracing-subscriber.workspace = true
 opt-level = 0
 
 [profile.release]
-opt-level = "s"
+opt-level = "s"  # Optimize for size
+lto = true  # Enable Link Time Optimization
+panic = "abort"  # Abort on panic for smaller binaries
+strip = true  # Remove debug symbols
