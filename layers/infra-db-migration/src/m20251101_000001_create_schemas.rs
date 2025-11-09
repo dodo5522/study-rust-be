@@ -1,7 +1,7 @@
 use sea_orm_migration::prelude::*;
 use sea_orm::{Statement, DatabaseBackend};
 
-use super::consts::SCHEMA_SPEC;
+use super::iden::SCHEMA_SPEC;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;

@@ -1,7 +1,7 @@
 use sea_orm_migration::{prelude::*, schema::*};
 
-use super::consts::SCHEMA_SPEC;
-use super::iden::site::Sites;
+use super::iden::SCHEMA_SPEC;
+use super::iden::spec::Sites;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -15,7 +15,11 @@ impl Iden for Sites {
                 Self::Schema => SCHEMA_SPEC,
                 Self::Table => "sites",
                 Self::Id => "id",
-                Self::DeviceType => "device_type",
+                Self::Name => "name",
+                Self::Address => "address",
+                Self::Longitude => "longitude",
+                Self::Latitude => "latitude",
+                _ => panic!("Unsupported column"),
             }
         )
         .unwrap();
@@ -40,7 +44,10 @@ impl MigrationTrait for Migration {
             .alter_table(
                 Table::alter()
                     .table((Sites::Schema, Sites::Table))
-                    .add_column_if_not_exists(string(Sites::DeviceType))
+                    .add_column_if_not_exists(string(Sites::Name))
+                    .add_column_if_not_exists(string(Sites::Address))
+                    .add_column_if_not_exists(double(Sites::Longitude))
+                    .add_column_if_not_exists(double(Sites::Latitude))
                     .to_owned()
             )
             .await

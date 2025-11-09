@@ -1,5 +1,5 @@
 [package]
-name = "migration"
+name = "infra-db-migration"
 version = "0.1.0"
 edition = "2021"
 publish = false
@@ -12,7 +12,7 @@ path = "src/lib.rs"
 anyhow.workspace = true
 async-std = { version = "1", features = ["attributes", "tokio1"] }
 dotenvy.workspace = true
-layer-infrastructure-db = {path = "../layers/infrastructure-db" }
+layer-infra-db = {path = "../infra-db" }
 
 [dependencies.sea-orm-migration]
 version = "1.1.0"
