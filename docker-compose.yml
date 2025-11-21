@@ -32,9 +32,11 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: 5432
-      DB_NAME: app_dev
-      DB_USER: postgres
-      DB_PASSWORD: postgres
+      DB_NAME: energy
+      DB_APP_USER: operator
+      DB_APP_PASSWORD: password
+      DB_MIG_USER: migrator
+      DB_MIG_PASSWORD: password
       BIND_PORT: 8000
       BIND_ADDR: 0.0.0.0
     ports:

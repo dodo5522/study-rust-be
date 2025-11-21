@@ -1,7 +1,26 @@
--- init.sql: create table for example
-CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
+CREATE USER tester WITH PASSWORD 'password';
+CREATE USER migrator WITH PASSWORD 'password';
+CREATE USER operator WITH PASSWORD 'password';
+CREATE USER administrator WITH PASSWORD 'password';
+
+CREATE DATABASE test;
+REVOKE CONNECT ON DATABASE test FROM public;
+GRANT CONNECT, CREATE ON DATABASE test TO tester, administrator;
+
+CREATE DATABASE energy;
+REVOKE CONNECT ON DATABASE energy FROM public;
+GRANT CONNECT, CREATE ON DATABASE energy TO migrator, administrator;
+GRANT CONNECT ON DATABASE energy TO operator;
+
+\connect test
+GRANT ALL ON SCHEMA public TO tester, administrator;
+ALTER DEFAULT PRIVILEGES GRANT ALL ON TABLES TO tester, administrator;
+ALTER DEFAULT PRIVILEGES GRANT ALL ON SEQUENCES TO tester, administrator;
+
+\connect energy
+GRANT ALL ON SCHEMA public TO migrator, administrator;
+GRANT USAGE ON SCHEMA public TO operator;
+ALTER DEFAULT PRIVILEGES GRANT ALL ON TABLES TO migrator, administrator;
+ALTER DEFAULT PRIVILEGES GRANT ALL ON SEQUENCES TO migrator, administrator;
+ALTER DEFAULT PRIVILEGES GRANT SELECT, INSERT, UPDATE, TRIGGER, DELETE ON TABLES TO operator;
+ALTER DEFAULT PRIVILEGES GRANT USAGE ON SEQUENCES TO operator;
