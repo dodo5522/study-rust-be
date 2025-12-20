@@ -29,8 +29,6 @@ services:
     build:
       context: .
       dockerfile: ./docker/backend-dev/Dockerfile
-    working_dir:
-      /tmp/backend
     environment:
       DB_HOST: db
       DB_PORT: 5432
@@ -46,4 +44,4 @@ services:
     depends_on:
       - db
     volumes:
-      - .:/tmp/backend
+      - .:/var/tmp/backend

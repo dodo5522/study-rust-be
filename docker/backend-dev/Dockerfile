@@ -1,3 +1,7 @@
 FROM rust:1.90.0-slim-trixie
+WORKDIR /var/tmp/backend
+
 RUN cargo install cargo-watch
-CMD ["cargo-watch", "--delay", "1", "--watch", "Cargo.toml", "--watch", "src", "--watch", "layers", "-x", "'run'"]
+COPY --chmod=755 ./docker/backend-dev/cmd.sh /var/tmp/cmd.sh
+
+CMD ["/var/tmp/cmd.sh"]
