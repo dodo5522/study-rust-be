@@ -1,0 +1,86 @@
+CREATE DATABASE test;
+-- DBへの接続権限をPUBLICロール（今後追加されるユーザ含む全ユーザ）から剥がす
+REVOKE CONNECT ON DATABASE test FROM PUBLIC;
+-- testerのみ、DBへの接続を含む全ての操作を許可する
+GRANT CONNECT, CREATE, TEMPORARY ON DATABASE test TO tester;
+
+\connect test
+-- 実データ管理用スキーマ(発電, 消費)を生成. ownerはtester.
+SET ROLE tester;
+CREATE SCHEMA generation AUTHORIZATION tester;
+CREATE SCHEMA consumption AUTHORIZATION tester;
+RESET ROLE;
+-- testerのみ、スキーマの名前解決とオブジェクト作成を許可する
+GRANT ALL ON SCHEMA public, generation, consumption TO tester;
+-- testerが今後作るテーブルには、以下で示す権限を付ける
+SET ROLE tester;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO tester;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO tester;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO tester;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA generation GRANT ALL ON TABLES TO tester;
+ALTER DEFAULT PRIVILEGES IN SCHEMA generation GRANT ALL ON SEQUENCES TO tester;
+ALTER DEFAULT PRIVILEGES IN SCHEMA generation GRANT ALL ON FUNCTIONS TO tester;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA consumption GRANT ALL ON TABLES TO tester;
+ALTER DEFAULT PRIVILEGES IN SCHEMA consumption GRANT ALL ON SEQUENCES TO tester;
+ALTER DEFAULT PRIVILEGES IN SCHEMA consumption GRANT ALL ON FUNCTIONS TO tester;
+RESET ROLE;
+
+CREATE DATABASE energy;
+-- DBへの接続権限をPUBLICロール（今後追加されるユーザ含む全ユーザ）から剥がす
+REVOKE CONNECT ON DATABASE energy FROM PUBLIC;
+-- migratorのみ、DBへの接続を含む全ての操作を許可する
+GRANT CONNECT, CREATE, TEMPORARY ON DATABASE energy TO migrator;
+-- operatorは、DBへの接続と一時テーブル作成のみ許可する
+GRANT CONNECT, TEMPORARY ON DATABASE energy TO operator;
+
+\connect energy
+-- 実データ管理用スキーマ(発電, 消費)を生成. ownerはmigrator.
+SET ROLE migrator;
+CREATE SCHEMA generation AUTHORIZATION migrator;
+CREATE SCHEMA consumption AUTHORIZATION migrator;
+RESET ROLE;
+-- publicスキーマへの権限をPUBLICロール（今後追加されるユーザ含む全ユーザ）から剥がす
+REVOKE CREATE, USAGE ON SCHEMA public FROM PUBLIC;
+-- migratorのみ、スキーマの名前解決とオブジェクト作成を許可する
+GRANT ALL ON SCHEMA public, generation, consumption TO migrator;
+-- operatorには、スキーマの名前解決のみ許可する
+GRANT USAGE ON SCHEMA public, generation, consumption TO operator;
+-- migratorが作るテーブルには、以下で示す権限を付ける(operatorは厳しめ)
+SET ROLE migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES ON TABLES TO operator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO operator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO operator;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA generation GRANT ALL ON TABLES TO migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA generation GRANT ALL ON SEQUENCES TO migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA generation GRANT ALL ON FUNCTIONS TO migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA generation GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES ON TABLES TO operator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA generation GRANT USAGE, SELECT ON SEQUENCES TO operator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA generation GRANT EXECUTE ON FUNCTIONS TO operator;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA consumption GRANT ALL ON TABLES TO migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA consumption GRANT ALL ON SEQUENCES TO migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA consumption GRANT ALL ON FUNCTIONS TO migrator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA consumption GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES ON TABLES TO operator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA consumption GRANT USAGE, SELECT ON SEQUENCES TO operator;
+ALTER DEFAULT PRIVILEGES IN SCHEMA consumption GRANT EXECUTE ON FUNCTIONS TO operator;
+RESET ROLE;
+
+-- チェック用
+-- DB権限
+\l+ energy;
+-- スキーマ権限
+\dn+ public
+\dn+ generation
+\dn+ consumption
+-- テーブル権限
+\dp public.*
+\dp generation.*
+\dp consumption.*
+-- デフォルト権限
+SELECT * FROM pg_default_acl;

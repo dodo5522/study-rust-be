@@ -1,5 +1,5 @@
 [workspace]
-members = [".", "be-domain", "be-infrastructure", "be-presentation", "be-use-case"]
+members = [".", "layers/*"]
 resolver = "2"
 
 [workspace.package]
@@ -23,10 +23,10 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
-be-domain = {path = "./be-domain" }
-be-infrastructure = {path = "./be-infrastructure" }
-be-use-case = {path = "./be-use-case" }
-be-presentation = {path = "./be-presentation" }
+layer-domain = {path = "layers/domain" }
+layer-infra-db = {path = "layers/infra-db" }
+layer-use-case = {path = "layers/use-case" }
+layer-presentation = {path = "layers/presentation" }
 tokio.workspace = true
 axum.workspace = true
 anyhow.workspace = true
@@ -38,4 +38,7 @@ tracing-subscriber.workspace = true
 opt-level = 0
 
 [profile.release]
-opt-level = "s"
+opt-level = "s"  # Optimize for size
+lto = true  # Enable Link Time Optimization
+panic = "abort"  # Abort on panic for smaller binaries
+strip = true  # Remove debug symbols

@@ -1,5 +1,5 @@
 [package]
-name = "be-use-case"
+name = "layer-use-case"
 version.workspace = true
 edition.workspace = true
 

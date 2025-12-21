@@ -1,6 +1,7 @@
 use dotenvy::var;
 
-use be_presentation::get_router;
+use layer_infra_db::get_connection;
+use layer_presentation::get_router;
 
 #[tokio::main]
 async fn main() {
@@ -10,12 +11,16 @@ async fn main() {
     }
 }
 
-/// Run the be-application server.
+/// Run the application server.
 async fn run() -> anyhow::Result<()> {
     let bind_addr = var("BIND_ADDR")?;
     let bind_port = var("BIND_PORT")?;
 
     tracing_subscriber::fmt::init();
+
+    // connect db
+    let db = get_connection().await?;
+    println!("{:?}", db);
 
     // run our app with hyper, listening globally on the port
     let router = get_router();

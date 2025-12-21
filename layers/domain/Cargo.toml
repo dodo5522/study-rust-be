@@ -1,5 +1,5 @@
 [package]
-name = "be-domain"
+name = "layer-domain"
 version.workspace = true
 edition.workspace = true
 
