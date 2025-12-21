@@ -1,4 +1,4 @@
 mod connection;
 pub use connection::*;
-
-pub mod env;
+mod env;
+pub use env::*;
