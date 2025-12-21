@@ -1,11 +1,11 @@
-use sea_orm_migration::prelude::Iden;
 use crate::iden::SCHEMA_GENERATION;
+use sea_orm_migration::prelude::Iden;
 
 pub enum Sources {
     Schema,
     Table,
-    Id,
     Source,
+    Remark,
     CreatedAt,
 }
 
@@ -17,8 +17,8 @@ impl Iden for Sources {
             match self {
                 Self::Schema => SCHEMA_GENERATION,
                 Self::Table => "sources",
-                Self::Id => "id",
                 Self::Source => "source",
+                Self::Remark => "remark",
                 Self::CreatedAt => "created_at",
             }
         )
