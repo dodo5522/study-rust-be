@@ -1,9 +1,10 @@
 # Poem + SeaORM sample (local with Docker Compose)
 
-このプロジェクトは Poem (web framework) と SeaORM (ORM) を使った最小のテンプレートです。
-PostgreSQL は Docker Compose で立ち上げ、起動時に `docker/02-init.sql` の内容でテーブルを作成します。
+このプロジェクトは Poem (web framework) と SeaORM (ORM) を使ったプロジェクトです。
+PostgreSQL は Docker Compose で立ち上げ、起動時に [docker/db/*.*](docker/db) の内容でDBを初期化します。
 
-動作確認手順
+# 動作確認手順
+
 1. Docker Compose で PostgreSQL を起動
    - docker-compose.yml があるディレクトリで:
      ```
@@ -37,8 +38,7 @@ PostgreSQL は Docker Compose で立ち上げ、起動時に `docker/02-init.sql
        "email": "alice@example.com"
      }
 
-実装ノート & 次の拡張案（今後やれること）
+# 実装ノート & 次の拡張案（今後やれること）
+
 - 認証（JWT / OAuth）、パスワード保存（argon2）を追加する
-- マイグレーションを SeaORM-migration や refinery で管理する（今は 02-init.sql を使用）
 - OpenAPI ドキュメント（poem-openapi）を追加して FastAPI のような自動ドキュメントを出す
-- Dockerfile を作ってアプリ本体をコンテナ化し、docker-compose にサービスを追加する

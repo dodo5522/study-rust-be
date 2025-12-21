@@ -20,3 +20,6 @@ features = [
   "runtime-tokio-rustls",
   "sqlx-postgres",
 ]
+
+[dependencies.layer-infra-db]
+path = "../infra-db"
