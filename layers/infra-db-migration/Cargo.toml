@@ -10,9 +10,9 @@ path = "src/lib.rs"
 
 [dependencies]
 anyhow.workspace = true
-async-std = { version = "1", features = ["attributes", "tokio1"] }
+async-compat = "0.2.5"
 dotenvy.workspace = true
-layer-infra-db = {path = "../infra-db" }
+smol = "2.0.2"
 
 [dependencies.sea-orm-migration]
 version = "1.1.0"
