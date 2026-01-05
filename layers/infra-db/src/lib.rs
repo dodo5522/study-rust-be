@@ -3,3 +3,4 @@ pub use connection::*;
 mod entity;
 mod env;
 pub use env::*;
+pub mod repository;
