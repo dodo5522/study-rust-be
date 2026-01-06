@@ -1,15 +1,16 @@
-use sea_orm_migration::prelude::Iden;
 use crate::iden::SCHEMA_GENERATION;
+use sea_orm_migration::prelude::Iden;
 
 pub enum Histories {
     Schema,
     Table,
     Id,
-    GroupId,
-    SourceId,
-    LabelId,
-    UnitId,
+    Group,
+    Source,
+    Label,
+    Unit,
     Value,
+    Remark,
     MonitoredAt,
     CreatedAt,
     UpdatedAt,
@@ -24,11 +25,12 @@ impl Iden for Histories {
                 Self::Schema => SCHEMA_GENERATION,
                 Self::Table => "histories",
                 Self::Id => "id",
-                Self::GroupId => "group_id",
-                Self::SourceId => "source_id",
-                Self::LabelId => "label_id",
-                Self::UnitId => "unit_id",
+                Self::Group => "group",
+                Self::Source => "source",
+                Self::Label => "label",
+                Self::Unit => "unit",
                 Self::Value => "value",
+                Self::Remark => "remark",
                 Self::MonitoredAt => "monitored_at",
                 Self::CreatedAt => "created_at",
                 Self::UpdatedAt => "updated_at",

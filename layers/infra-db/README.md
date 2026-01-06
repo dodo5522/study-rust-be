@@ -2,7 +2,7 @@
 
 - Generate entity files from database schema
     ```sh
-    sea-orm-cli generate entity -o layers/infra-db/src/entities \
+    sea-orm-cli generate entity -o layers/infra-db/src/entity \
         -u postgresql://migrator:password@localhost:5432/energy \
         -s generation
     ```
