@@ -37,6 +37,9 @@ dotenvy.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
 
+[features]
+debug = []
+
 [profile.dev]
 opt-level = 0
 
