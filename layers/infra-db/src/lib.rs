@@ -1,6 +1,6 @@
 mod connection;
 pub use connection::*;
-mod entity;
 mod env;
+mod models;
 pub use env::*;
 pub mod repository;

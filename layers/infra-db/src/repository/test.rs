@@ -1,9 +1,9 @@
 use dotenvy::var;
 use sea_orm::{ActiveValue, entity::*};
 
-use crate::entity::prelude::Units;
-use crate::entity::units;
 use crate::get_connection;
+use crate::models::prelude::Units;
+use crate::models::units;
 
 pub async fn add_kwh() -> anyhow::Result<()> {
     let user = var("DB_OPERATOR_NAME")?;
