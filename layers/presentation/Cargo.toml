@@ -4,12 +4,16 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
-tokio.workspace = true
 axum.workspace = true
 anyhow.workspace = true
+chrono.workspace = true
 dotenvy.workspace = true
-serde.workspace = true
 poem = "3.1.12"
+serde.workspace = true
+tokio.workspace = true
+
+[dependencies.layer-domain]
+path = "../domain"
 
 [dependencies.layer-infra-db]
 path = "../infra-db"
