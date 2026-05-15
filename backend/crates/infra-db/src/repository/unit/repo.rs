@@ -4,7 +4,7 @@ use crate::{
 };
 use layer_domain::{entity::UnitEntity, value_object};
 use layer_use_case::interface::{GenerationError, UnitRepositoryTrait};
-use sea_orm::{DatabaseTransaction, DbErr, entity::EntityTrait};
+use sea_orm::{DatabaseTransaction, entity::EntityTrait};
 
 pub struct UnitRepository {}
 

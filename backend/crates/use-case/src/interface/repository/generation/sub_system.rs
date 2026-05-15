@@ -8,42 +8,55 @@ pub trait SubSystemRepositoryTrait<Tx> {
     ///
     /// # Arguments
     /// * `tx` - データベーストランザクション
-    /// * `new` - 新規登録する発電状況
+    /// * `e` - 新規登録するサブシステム
     /// # Returns
-    /// * `Result<SubSystem, GenerationRepositoryError>` - 成功時は登録後のグループ（サブシステム）を返し、失敗時はエラーを返す
+    /// * `Result<(), GenerationRepositoryError>` - 成功時は空のタプルを返し、失敗時はエラーを返す
     /// # Errors
     /// * `GenerationRepositoryError` - 記録に失敗した場合のエラー
-    async fn add(&self, tx: &Tx, new: &SubSystemEntity) -> Result<String, GenerationError>;
+    async fn add(&self, tx: &Tx, e: &SubSystemEntity) -> Result<(), GenerationError>;
 
     /// グループ（サブシステム）を取得する
     ///
     /// # Arguments
     /// * `tx` - データベーストランザクション
+    /// * `sub_system` - 情報取得する対象のサブシステム。指定なければ全て取得する。
     /// # Returns
     /// * `Result<Vec<GroupRecord>, GenerationRepositoryError>` - 成功時はグループ（サブシステム）のエンティティを返し、失敗時はエラーを返す
     /// # Errors
     /// * `GenerationRepositoryError` - 取得に失敗した場合のエラー
-    async fn get(&self, tx: &Tx) -> Result<Vec<SubSystemEntity>, GenerationError>;
+    async fn get(
+        &self,
+        tx: &Tx,
+        sub_system: Option<impl AsRef<str> + Send>,
+    ) -> Result<Vec<SubSystemEntity>, GenerationError>;
 
-    /// グループ（サブシステム）が存在するか確認する
+    /// グループ（サブシステム）を更新する
     ///
     /// # Arguments
     /// * `tx` - データベーストランザクション
-    /// * `system` - 削除するグループ（サブシステム）
+    /// * `e` - 更新する対象のサブシステム
     /// # Returns
-    /// * `Result<bool, GenerationRepositoryError>` - 成功時は存在するかどうかを返し、失敗時はエラーを返す
+    /// * `Result<UnitEntity, GenerationRepositoryError>` - 成功時は値を返し、失敗時はエラーを返す
     /// # Errors
     /// * `GenerationRepositoryError` - 取得に失敗した場合のエラー
-    async fn has(&self, tx: &Tx, system: &String) -> Result<bool, GenerationError>;
+    async fn update(
+        &self,
+        tx: &Tx,
+        e: &SubSystemEntity,
+    ) -> Result<SubSystemEntity, GenerationError>;
 
     /// グループ（サブシステム）を削除する
     ///
     /// # Arguments
     /// * `tx` - データベーストランザクション
-    /// * `system` - 削除するグループ（サブシステム）
+    /// * `sub_system` - 削除するグループ（サブシステム）
     /// # Returns
     /// * `Result<(), GenerationRepositoryError>` - 成功時は空のタプルを返し、失敗時はエラーを返す
     /// # Errors
     /// * `GenerationRepositoryError` - 削除に失敗した場合のエラー
-    async fn delete(&self, tx: &Tx, system: &String) -> Result<(), GenerationError>;
+    async fn delete(
+        &self,
+        tx: &Tx,
+        sub_system: impl AsRef<str> + Send,
+    ) -> Result<(), GenerationError>;
 }

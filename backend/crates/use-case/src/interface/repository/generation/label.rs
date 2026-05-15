@@ -19,7 +19,7 @@ pub trait LabelRepositoryTrait<Tx> {
     ///
     /// # Arguments
     /// * `tx` - データベーストランザクション
-    /// * `label` - 取得するラベルの名前（オプション）
+    /// * `label` - 取得するラベルの名前。指定なければ全て取得する。
     /// # Returns
     /// * `Result<Vec<LabelRecord>, GenerationRepositoryError>` - 成功時はラベルのエンティティを返し、失敗時はエラーを返す
     /// # Errors
@@ -34,7 +34,7 @@ pub trait LabelRepositoryTrait<Tx> {
     ///
     /// # Arguments
     /// * `tx` - データベーストランザクション
-    /// * `entity` - 更新するラベルのエンティティ
+    /// * `e` - 更新するラベルのエンティティ
     /// # Returns
     /// * `Result<LabelEntity, GenerationRepositoryError>` - 成功時は値を返し、失敗時はエラーを返す
     /// # Errors

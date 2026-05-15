@@ -50,7 +50,7 @@ impl<Tx, U: UnitOfWorkTrait<Tx>, F: UnitOfWorkFactoryTrait<Tx, U>, R: LabelRepos
         let labels = self.repo.get(uow.ref_tx(), Some(label.as_ref())).await?;
 
         if let Some(label) = labels.first() {
-            Ok(Some(label.to_owned().into()))
+            Ok(Some(label.to_owned()))
         } else {
             Ok(None)
         }
@@ -59,7 +59,7 @@ impl<Tx, U: UnitOfWorkTrait<Tx>, F: UnitOfWorkFactoryTrait<Tx, U>, R: LabelRepos
     pub async fn get_all(self) -> Result<Vec<LabelEntity>, GenerationError> {
         let uow = self.factory.begin().await.map_err(Self::map_db_err)?;
         let labels = self.repo.get(uow.ref_tx(), None::<&str>).await?;
-        Ok(labels.into_iter().map(|u| u.into()).collect())
+        Ok(labels)
     }
 
     pub async fn update(self, input: LabelEntity) -> Result<(), GenerationError> {
