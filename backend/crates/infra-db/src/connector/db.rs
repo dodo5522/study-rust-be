@@ -1,3 +1,4 @@
+use super::DatabasePoolConfig;
 use crate::errors::Error;
 use sea_orm::{Database, DatabaseConnection};
 
@@ -8,6 +9,7 @@ pub struct DatabaseConnector {
     db_host: String,
     db_port: String,
     db_name: String,
+    pool_config: Option<DatabasePoolConfig>,
 }
 
 impl DatabaseConnector {
@@ -17,6 +19,7 @@ impl DatabaseConnector {
         db_host: String,
         db_port: String,
         db_name: String,
+        pool_config: Option<DatabasePoolConfig>,
     ) -> DatabaseConnector {
         Self {
             user,
@@ -24,6 +27,7 @@ impl DatabaseConnector {
             db_host,
             db_port,
             db_name,
+            pool_config,
         }
     }
 
@@ -48,8 +52,12 @@ impl DatabaseConnector {
     /// # Returns
     /// A `DatabaseConnection` instance connected to the database specified in the environment variables.
     pub async fn get_connection(&self) -> Result<DatabaseConnection, Error> {
-        Ok(Database::connect(self.get_url())
-            .await
-            .map_err(|e| Error::DbFailed(e))?)
+        let url = self.get_url();
+        let connection = if let Some(config) = &self.pool_config {
+            Database::connect(config.convert_to(url)).await
+        } else {
+            Database::connect(url).await
+        };
+        Ok(connection.map_err(|e| Error::DbFailed(e))?)
     }
 }
