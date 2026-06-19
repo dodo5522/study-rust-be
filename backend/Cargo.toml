@@ -14,7 +14,7 @@ chrono = { version = "0.4.42", features = ["serde"] }
 chrono-tz = "0.10.4"
 mockall = "0.14.0"
 tokio = { version = "1.47.2", features = ["rt-multi-thread", "macros"] }
-sea-orm = { version = "2.0.0-rc", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "with-chrono"] }
+sea-orm = { version = "=2.0.0-rc.32", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "with-chrono"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tracing = "0.1"

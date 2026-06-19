@@ -11,6 +11,7 @@ async fn main() -> anyhow::Result<()> {
         var("DB_HOST")?,
         var("DB_PORT")?,
         var("DB_NAME")?,
+        None,
     )
     .get_url();
 

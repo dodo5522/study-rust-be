@@ -1,4 +1,4 @@
-use layer_infra_db::DatabaseConnector;
+use layer_infra_db::{DatabaseConnector, DatabasePoolConfig};
 use layer_presentation::route;
 use std::env::var;
 
@@ -18,6 +18,14 @@ async fn run() -> anyhow::Result<()> {
         var("DB_HOST")?,
         var("DB_PORT")?,
         var("DB_NAME")?,
+        Some(DatabasePoolConfig {
+            max_connections: read_env("DB_POOL_MAX_CONNECTIONS")?,
+            min_connections: read_env("DB_POOL_MIN_CONNECTIONS")?,
+            connect_timeout_secs: read_env("DB_POOL_CONNECT_TIMEOUT_SECS")?,
+            acquire_timeout_secs: read_env("DB_POOL_ACQUIRE_TIMEOUT_SECS")?,
+            idle_timeout_secs: read_env("DB_POOL_IDLE_TIMEOUT_SECS")?,
+            max_lifetime_secs: read_env("DB_POOL_MAX_LIFETIME_SECS")?,
+        }),
     );
     let bind_addr = var("BIND_ADDR")?;
     let bind_port = var("BIND_PORT")?;
@@ -47,4 +55,17 @@ async fn run() -> anyhow::Result<()> {
     axum::serve(listener, router).await?;
 
     Ok(())
+}
+
+/// Convert environment variable into type F like u32, u64
+fn read_env<F>(key: &str) -> anyhow::Result<Option<F>>
+where
+    F: std::str::FromStr,
+    F::Err: std::error::Error + Send + Sync + 'static,
+{
+    match var(key) {
+        Ok(value) => Ok(Some(value.parse::<F>()?)),
+        Err(std::env::VarError::NotPresent) => Ok(None),
+        Err(err) => Err(err.into()),
+    }
 }
