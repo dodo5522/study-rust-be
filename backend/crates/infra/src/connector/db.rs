@@ -1,5 +1,5 @@
 use super::DatabasePoolConfig;
-use crate::errors::Error;
+use crate::errors::InfraError;
 use sea_orm::{Database, DatabaseConnection};
 
 #[derive(Debug, Clone)]
@@ -51,13 +51,13 @@ impl DatabaseConnector {
     ///
     /// # Returns
     /// A `DatabaseConnection` instance connected to the database specified in the environment variables.
-    pub async fn get_connection(&self) -> Result<DatabaseConnection, Error> {
+    pub async fn get_connection(&self) -> Result<DatabaseConnection, InfraError> {
         let url = self.get_url();
         let connection = if let Some(config) = &self.pool_config {
             Database::connect(config.convert_to(url)).await
         } else {
             Database::connect(url).await
         };
-        Ok(connection.map_err(|e| Error::DbFailed(e))?)
+        Ok(connection.map_err(|e| InfraError::DbFailed(e))?)
     }
 }
