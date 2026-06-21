@@ -9,7 +9,7 @@ Rust バックエンドのルートは `backend/` です。
 - `backend/crates/presentation` HTTP ルーティング・DTO・OpenAPI
 - `backend/crates/use-case` アプリケーションサービス
 - `backend/crates/domain` ドメインモデル・リポジトリ境界
-- `backend/crates/infra-db` DB 実装（SeaORM）
+- `backend/crates/infra` インフラストラクチャ実装（DBはSeaORM）
 - `backend/crates/infra-db-migration` マイグレーション
 - `docker/` 開発用コンテナ定義
 - `init/` DB 初期化 SQL / 設定

@@ -6,7 +6,7 @@ use axum::{
     http::StatusCode,
 };
 use layer_domain::entity::UnitEntity;
-use layer_infra_db::{repository::unit::UnitRepository, unit_of_work::UnitOfWorkFactory};
+use layer_infra::{repository::unit::UnitRepository, unit_of_work::UnitOfWorkFactory};
 use layer_use_case::{interface::GenerationError, unit::UnitUseCase};
 
 struct ErrorMapper {}

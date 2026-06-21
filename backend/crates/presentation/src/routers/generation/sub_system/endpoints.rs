@@ -6,9 +6,7 @@ use axum::{
     http::StatusCode,
 };
 use layer_domain::entity::SubSystemEntity;
-use layer_infra_db::{
-    repository::sub_system::SubSystemRepository, unit_of_work::UnitOfWorkFactory,
-};
+use layer_infra::{repository::sub_system::SubSystemRepository, unit_of_work::UnitOfWorkFactory};
 use layer_use_case::interface::GenerationError;
 use layer_use_case::sub_system::SubSystemUseCase;
 

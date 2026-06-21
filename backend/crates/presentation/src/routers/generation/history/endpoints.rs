@@ -9,7 +9,7 @@ use axum::{
     http::StatusCode,
 };
 use layer_domain::entity::HistoryEntity;
-use layer_infra_db::{repository::history::HistoryRepository, unit_of_work::UnitOfWorkFactory};
+use layer_infra::{repository::history::HistoryRepository, unit_of_work::UnitOfWorkFactory};
 use layer_use_case::history::HistoryUseCase;
 
 struct ErrorMapper {}

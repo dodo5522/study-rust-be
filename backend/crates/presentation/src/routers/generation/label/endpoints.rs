@@ -6,7 +6,7 @@ use axum::{
     http::StatusCode,
 };
 use layer_domain::entity::LabelEntity;
-use layer_infra_db::{repository::label::LabelRepository, unit_of_work::UnitOfWorkFactory};
+use layer_infra::{repository::label::LabelRepository, unit_of_work::UnitOfWorkFactory};
 use layer_use_case::{interface::GenerationError, label::LabelUseCase};
 
 struct ErrorMapper {}

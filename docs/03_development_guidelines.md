@@ -47,7 +47,7 @@
         - `crates/presentation/` HTTP ルーティングとリクエスト/レスポンスモデル
         - `crates/use-case/` アプリケーション/サービス層、プレゼンテーションとのインタフェース
         - `crates/domain/` ドメインとリポジトリのインターフェース
-        - `crates/infra-db/` SeaORM のエンティティ、リポジトリ、DB 接続補助
+        - `crates/infra/` SeaORM のエンティティ、リポジトリ、DB 接続補助
         - `crates/infra-db-migration/` SeaORM のマイグレーション CLI とファイル群
 
 ### 4.3 リクエスト処理の流れ
@@ -57,7 +57,7 @@
 1. `presentation` で HTTP リクエストを受け取る
 2. リクエスト DTO を use-case 入力 DTO へ変換
 3. `use-case` が Unit of Work を開始
-4. `infra-db` の Repository 実装が SeaORM で DB へ保存
+4. `infra` の Repository 実装が SeaORM で DB へ保存
 5. 成功時 `commit` / 失敗時 `rollback`
 6. `presentation` が HTTP レスポンスへ変換して返却
 
@@ -169,4 +169,3 @@
 - frontend は TanStack Start（RC 含む）を前提としているため、破壊的変更の追従コストを許容する。
 - 生成コードをすぐに大規模改変せず、先に構成理解と最小スケルトン化を優先する。
 - フロントエンドの本番向け保護ページ導線は未実装のため、認証デモ実装と混同しない。
-

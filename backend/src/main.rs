@@ -1,4 +1,4 @@
-use layer_infra_db::{DatabaseConnector, DatabasePoolConfig};
+use layer_infra::{DatabaseConnector, DatabasePoolConfig};
 use layer_presentation::route;
 use std::env::var;
 

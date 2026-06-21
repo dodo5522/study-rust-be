@@ -1,4 +1,4 @@
-use layer_infra_db::DatabaseConnector;
+use layer_infra::DatabaseConnector;
 use sea_orm_migration::prelude::cli;
 use std::env;
 use std::env::var;

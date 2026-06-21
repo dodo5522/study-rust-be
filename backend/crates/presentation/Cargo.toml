@@ -16,8 +16,8 @@ utoipa.workspace = true
 utoipa-swagger-ui.workspace = true
 utoipa-redoc.workspace = true
 
-[dependencies.layer-infra-db]
-path = "../infra-db"
+[dependencies.layer-infra]
+path = "../infra"
 
 [dependencies.layer-use-case]
 path = "../use-case"
