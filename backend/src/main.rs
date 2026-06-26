@@ -1,6 +1,5 @@
-use layer_infra::{DatabaseConnector, DatabasePoolConfig};
+use layer_infra::{DatabaseConnector, DatabasePoolConfig, DatabaseUser, EnvConnector};
 use layer_presentation::route;
-use std::env::var;
 
 #[tokio::main]
 async fn main() {
@@ -12,32 +11,26 @@ async fn main() {
 
 /// Run the application server.
 async fn run() -> anyhow::Result<()> {
+    let env = EnvConnector::new(DatabaseUser::Operator)?;
     let db_connector = DatabaseConnector::new(
-        var("DB_OPERATOR_NAME")?,
-        var("DB_OPERATOR_PASSWORD")?,
-        var("DB_HOST")?,
-        var("DB_PORT")?,
-        var("DB_NAME")?,
+        env.db_user_name,
+        env.db_user_password,
+        env.db_host,
+        env.db_port,
+        env.db_name,
         Some(DatabasePoolConfig {
-            max_connections: read_env("DB_POOL_MAX_CONNECTIONS")?,
-            min_connections: read_env("DB_POOL_MIN_CONNECTIONS")?,
-            connect_timeout_secs: read_env("DB_POOL_CONNECT_TIMEOUT_SECS")?,
-            acquire_timeout_secs: read_env("DB_POOL_ACQUIRE_TIMEOUT_SECS")?,
-            idle_timeout_secs: read_env("DB_POOL_IDLE_TIMEOUT_SECS")?,
-            max_lifetime_secs: read_env("DB_POOL_MAX_LIFETIME_SECS")?,
+            max_connections: env.db_pool_max_connections,
+            min_connections: env.db_pool_min_connections,
+            connect_timeout_secs: env.db_pool_connect_timeout_secs,
+            acquire_timeout_secs: env.db_pool_acquire_timeout_secs,
+            idle_timeout_secs: env.db_pool_idle_timeout_secs,
+            max_lifetime_secs: env.db_pool_max_lifetime_secs,
         }),
     );
-    let bind_addr = var("BIND_ADDR")?;
-    let bind_port = var("BIND_PORT")?;
-    let address = format!("{bind_addr}:{bind_port}");
+    let address = format!("{}:{}", env.host_name_to_bind, env.port_to_bind);
 
     #[allow(unused_mut)]
-    let mut allowed_origins: Vec<String> = var("ALLOWED_ORIGINS")?
-        .split(",")
-        .map(|s| s.trim())
-        .filter(|s| !s.is_empty())
-        .map(|s| s.into())
-        .collect();
+    let mut allowed_origins: Vec<String> = env.allowed_origins;
 
     #[cfg(feature = "allow-localhost-access")]
     {
@@ -55,17 +48,4 @@ async fn run() -> anyhow::Result<()> {
     axum::serve(listener, router).await?;
 
     Ok(())
-}
-
-/// Convert environment variable into type F like u32, u64
-fn read_env<F>(key: &str) -> anyhow::Result<Option<F>>
-where
-    F: std::str::FromStr,
-    F::Err: std::error::Error + Send + Sync + 'static,
-{
-    match var(key) {
-        Ok(value) => Ok(Some(value.parse::<F>()?)),
-        Err(std::env::VarError::NotPresent) => Ok(None),
-        Err(err) => Err(err.into()),
-    }
 }

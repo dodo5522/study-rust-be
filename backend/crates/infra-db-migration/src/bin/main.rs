@@ -1,21 +1,20 @@
-use layer_infra::DatabaseConnector;
+use layer_infra::{DatabaseConnector, DatabaseUser, EnvConnector};
 use sea_orm_migration::prelude::cli;
-use std::env;
-use std::env::var;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    let env = EnvConnector::new(DatabaseUser::Migrator)?;
     let db_url = DatabaseConnector::new(
-        var("DB_MIGRATOR_NAME")?,
-        var("DB_MIGRATOR_PASSWORD")?,
-        var("DB_HOST")?,
-        var("DB_PORT")?,
-        var("DB_NAME")?,
+        env.db_user_name,
+        env.db_user_password,
+        env.db_host,
+        env.db_port,
+        env.db_name,
         None,
     )
     .get_url();
 
-    env::set_var("DATABASE_URL", db_url);
+    EnvConnector::set_var("DATABASE_URL", db_url);
     cli::run_cli(migration::Migrator).await;
     Ok(())
 }

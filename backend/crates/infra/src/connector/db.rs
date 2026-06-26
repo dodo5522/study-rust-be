@@ -7,7 +7,7 @@ pub struct DatabaseConnector {
     user: String,
     password: String,
     db_host: String,
-    db_port: String,
+    db_port: u16,
     db_name: String,
     pool_config: Option<DatabasePoolConfig>,
 }
@@ -17,7 +17,7 @@ impl DatabaseConnector {
         user: String,
         password: String,
         db_host: String,
-        db_port: String,
+        db_port: u16,
         db_name: String,
         pool_config: Option<DatabasePoolConfig>,
     ) -> DatabaseConnector {
