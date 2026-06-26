@@ -19,7 +19,7 @@ impl ErrorMapperTrait for ErrorMapper {}
     post,
     tag = "Generation - History",
     description = "Create a new history record",
-    path = "/generation/history",
+    path = "/generation/histories",
     request_body = HistoryPostRequest,
     responses(
         (status = 201, description = "OK", body = HistoryPostResponse),
@@ -66,8 +66,8 @@ pub async fn post_history(
     get,
     tag = "Generation - History",
     description = "Get a history record by id",
-    path = "/generation/history/{id}",
-    params(("id" = i64, Path, description = "User id")),
+    path = "/generation/histories/{id}",
+    params(("id" = i64, Path, description = "History id")),
     responses(
         (status = 200, description = "OK", body = GetResponse),
         (status = 404, description = "Not Found", body = ErrorResponse),
