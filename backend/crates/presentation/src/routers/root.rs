@@ -37,6 +37,7 @@ pub fn route(allowed_origins: Vec<String>, db: DatabaseConnection) -> Result<Rou
 #[derive(OpenApi)]
 #[openapi(paths(
     health::checker::check_health,
+    generation::history::get_histories_with_range,
     generation::history::get_history,
     generation::history::post_history,
     generation::label::delete_label,

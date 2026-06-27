@@ -1,11 +1,11 @@
 use super::{
-    get::Response as GetResponse,
+    get::{HistoryItem, HistoryRangeQuery, Response as GetResponse},
     post::{HistoryPostRequest, HistoryPostResponse},
 };
 use crate::{error_mapper::ErrorMapperTrait, errors::ErrorResponse, routers::RouterState};
 use axum::{
     Json,
-    extract::{Path, State},
+    extract::{Path, Query, State},
     http::StatusCode,
 };
 use layer_domain::entity::HistoryEntity;
@@ -90,11 +90,13 @@ pub async fn get_history(
         Some(history) => Ok((
             StatusCode::OK,
             Json(GetResponse {
-                value: history.value,
-                unit: history.unit.to_string(),
                 sub_system: history.sub_system,
                 label: history.label,
-                monitored_at: history.monitored_at,
+                values: vec![HistoryItem {
+                    value: history.value,
+                    unit: history.unit.to_string(),
+                    monitored_at: history.monitored_at,
+                }],
             }),
         )),
         None => Err((
@@ -104,4 +106,36 @@ pub async fn get_history(
             }),
         )),
     }
+}
+
+#[utoipa::path(
+    get,
+    tag = "Generation - History",
+    description = "Get history records with date time range",
+    path = "/generation/histories",
+    params(HistoryRangeQuery),
+    responses(
+        (status = 200, description = "OK", body = GetResponse),
+        (status = 404, description = "Not Found", body = ErrorResponse),
+        (status = 500, description = "Internal Error", body = ErrorResponse)
+    )
+)]
+pub async fn get_histories_with_range(
+    State(state): State<RouterState>,
+    Query(query): Query<HistoryRangeQuery>,
+) -> Result<(StatusCode, Json<GetResponse>), (StatusCode, Json<ErrorResponse>)> {
+    let repo = HistoryRepository {};
+    let factory = UnitOfWorkFactory::new(state.db.clone());
+    let use_case = HistoryUseCase::new(repo, factory);
+    // let history = use_case
+    //     .get(id)
+    //     .await
+    //     .map_err(ErrorMapper::map_generation_error)?;
+
+    Err((
+        StatusCode::NOT_FOUND,
+        Json(ErrorResponse {
+            message: "History record not found".to_string(),
+        }),
+    ))
 }
