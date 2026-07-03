@@ -3,6 +3,7 @@ use crate::{
     models::{histories::ActiveModel, prelude::Histories},
 };
 use layer_domain::entity;
+use layer_domain::entity::HistoryEntity;
 use layer_use_case::interface::{GenerationError, HistoryRepositoryTrait};
 use sea_orm::{ActiveValue, DatabaseTransaction, entity::EntityTrait};
 
@@ -15,23 +16,26 @@ impl HistoryRepositoryTrait<DatabaseTransaction> for HistoryRepository {
     async fn add(
         &self,
         tx: &DatabaseTransaction,
-        new: &entity::HistoryEntity,
-    ) -> Result<i64, GenerationError> {
-        let history = ActiveModel {
-            unit: ActiveValue::Set(new.unit.to_owned().into()),
-            group: ActiveValue::Set(new.sub_system.to_owned()),
-            label: ActiveValue::Set(new.label.to_owned()),
-            value: ActiveValue::Set(new.value.to_owned()),
-            monitored_at: ActiveValue::Set(new.monitored_at.into()),
-            ..Default::default()
-        };
+        histories: &Vec<HistoryEntity>,
+    ) -> Result<(), GenerationError> {
+        let histories = histories
+            .iter()
+            .map(|new| ActiveModel {
+                unit: ActiveValue::Set(new.unit.to_owned().into()),
+                group: ActiveValue::Set(new.sub_system.to_owned()),
+                label: ActiveValue::Set(new.label.to_owned()),
+                value: ActiveValue::Set(new.value.to_owned()),
+                monitored_at: ActiveValue::Set(new.monitored_at.into()),
+                ..Default::default()
+            })
+            .collect::<Vec<ActiveModel>>();
 
-        let res = Histories::insert(history)
+        let _ = Histories::insert_many(histories)
             .exec(tx)
             .await
             .map_err(Self::map_db_to_generation_error)?;
 
-        Ok(res.last_insert_id)
+        Ok(())
     }
 
     async fn get(

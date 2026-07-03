@@ -8,12 +8,12 @@ pub trait HistoryRepositoryTrait<Tx> {
     ///
     /// # Arguments
     /// * `tx` - データベーストランザクション
-    /// * `new` - 新規登録する発電状況
+    /// * `histories` - 新規登録する発電状況
     /// # Returns
-    /// * `Result<EnergyRecord, GenerationRepositoryError>` - 成功時は登録後のエンティティを返し、失敗時はエラーを返す
+    /// * `Result<(), GenerationRepositoryError>` - 成功時は空タプルを返し、失敗時はエラーを返す
     /// # Errors
     /// * `GenerationRepositoryError` - 記録に失敗した場合のエラー
-    async fn add(&self, tx: &Tx, new: &HistoryEntity) -> Result<i64, GenerationError>;
+    async fn add(&self, tx: &Tx, histories: &Vec<HistoryEntity>) -> Result<(), GenerationError>;
 
     /// 発電状況を取得する
     ///
