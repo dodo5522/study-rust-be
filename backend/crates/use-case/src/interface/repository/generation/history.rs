@@ -13,7 +13,7 @@ pub trait HistoryRepositoryTrait<Tx> {
     /// * `Result<(), GenerationRepositoryError>` - 成功時は空タプルを返し、失敗時はエラーを返す
     /// # Errors
     /// * `GenerationRepositoryError` - 記録に失敗した場合のエラー
-    async fn add(&self, tx: &Tx, histories: &Vec<HistoryEntity>) -> Result<(), GenerationError>;
+    async fn add(&self, tx: &Tx, histories: Vec<HistoryEntity>) -> Result<(), GenerationError>;
 
     /// 発電状況を取得する
     ///

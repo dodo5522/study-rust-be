@@ -34,12 +34,12 @@ impl<Tx, U: UnitOfWorkTrait<Tx>, F: UnitOfWorkFactoryTrait<Tx, U>, R: HistoryRep
         }
     }
 
-    pub async fn create(self, input: HistoryEntity) -> Result<i64, GenerationError> {
+    pub async fn create(self, histories: Vec<HistoryEntity>) -> Result<(), GenerationError> {
         let uow = self.factory.begin().await.map_err(Self::map_db_err)?;
-        match self.repo.add(uow.ref_tx(), &input.into()).await {
-            Ok(history) => {
+        match self.repo.add(uow.ref_tx(), histories).await {
+            Ok(()) => {
                 uow.commit().await.map_err(Self::map_db_err)?;
-                Ok(history.into())
+                Ok(())
             }
             Err(e) => {
                 uow.rollback().await.map_err(Self::map_db_err)?;

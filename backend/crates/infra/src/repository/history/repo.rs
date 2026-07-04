@@ -16,15 +16,15 @@ impl HistoryRepositoryTrait<DatabaseTransaction> for HistoryRepository {
     async fn add(
         &self,
         tx: &DatabaseTransaction,
-        histories: &Vec<HistoryEntity>,
+        histories: Vec<HistoryEntity>,
     ) -> Result<(), GenerationError> {
         let histories = histories
-            .iter()
+            .into_iter()
             .map(|new| ActiveModel {
-                unit: ActiveValue::Set(new.unit.to_owned().into()),
-                group: ActiveValue::Set(new.sub_system.to_owned()),
-                label: ActiveValue::Set(new.label.to_owned()),
-                value: ActiveValue::Set(new.value.to_owned()),
+                unit: ActiveValue::Set(new.unit.into()),
+                group: ActiveValue::Set(new.sub_system),
+                label: ActiveValue::Set(new.label),
+                value: ActiveValue::Set(new.value),
                 monitored_at: ActiveValue::Set(new.monitored_at.into()),
                 ..Default::default()
             })
