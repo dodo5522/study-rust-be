@@ -1,6 +1,6 @@
 use super::{
     get::{HistoryItem, HistoryRangeQuery, Response as GetResponse},
-    post::{HistoryPostRequest, HistoryPostResponse},
+    post::HistoryPostRequest,
 };
 use crate::{error_mapper::ErrorMapperTrait, errors::ErrorResponse, routers::RouterState};
 use axum::{
@@ -8,7 +8,6 @@ use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
 };
-use layer_domain::entity::HistoryEntity;
 use layer_infra::{repository::history::HistoryRepository, unit_of_work::UnitOfWorkFactory};
 use layer_use_case::history::HistoryUseCase;
 
@@ -22,37 +21,24 @@ impl ErrorMapperTrait for ErrorMapper {}
     path = "/generation/histories",
     request_body = HistoryPostRequest,
     responses(
-        (status = 201, description = "OK", body = HistoryPostResponse),
+        (status = 201, description = "OK"),
         (status = 400, description = "Bad request", body = ErrorResponse),
         (status = 500, description = "Internal Error", body = ErrorResponse)
     )
 )]
-pub async fn post_history(
+pub async fn post_histories(
     State(state): State<RouterState>,
     Json(body): Json<HistoryPostRequest>,
-) -> Result<(StatusCode, Json<HistoryPostResponse>), (StatusCode, Json<ErrorResponse>)> {
-    let energy = HistoryEntity {
-        unit: body
-            .unit
-            .try_into()
-            .map_err(ErrorMapper::map_to_bad_request)?,
-        sub_system: body.sub_system,
-        label: body.label,
-        value: body.value,
-        monitored_at: body.monitored_at,
-    };
-    println!("Inserting history record: {:?}", energy);
-
+) -> Result<StatusCode, (StatusCode, Json<ErrorResponse>)> {
     let repo = HistoryRepository {};
     let factory = UnitOfWorkFactory::new(state.db.clone());
     let use_case = HistoryUseCase::new(repo, factory);
-    let created = use_case.create(energy).await;
+    let created = use_case
+        .create(body.try_into().map_err(ErrorMapper::map_to_bad_request)?)
+        .await;
 
     match created {
-        Ok(history_id) => Ok((
-            StatusCode::CREATED,
-            Json(HistoryPostResponse { id: history_id }),
-        )),
+        Ok(()) => Ok(StatusCode::CREATED),
         Err(error) => Err((
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(ErrorResponse {

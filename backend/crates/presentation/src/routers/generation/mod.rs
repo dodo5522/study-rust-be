@@ -14,7 +14,7 @@ pub fn route() -> Router<RouterState> {
     Router::<RouterState>::new()
         .merge(Router::new().route(
             "/histories",
-            get(history::get_histories_with_range).post(history::post_history),
+            get(history::get_histories_with_range).post(history::post_histories),
         ))
         .merge(Router::new().route("/histories/{id}", get(history::get_history)))
         .merge(Router::new().route("/labels", post(label::post_label).get(label::get_labels)))
