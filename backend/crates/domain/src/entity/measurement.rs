@@ -1,9 +1,9 @@
 use crate::value_object::Unit;
 use chrono::{DateTime, Utc};
 
-/// 発電状況エンティティ
+/// 発電計測情報エンティティ
 #[derive(Debug, Clone, PartialEq)]
-pub struct HistoryEntity {
+pub struct MeasurementEntity {
     /// 物理量の値
     pub value: f32,
     /// 物理量の単位(e.g. V, A, Wh, ...)

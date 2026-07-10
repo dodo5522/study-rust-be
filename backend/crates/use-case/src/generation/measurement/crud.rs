@@ -1,15 +1,15 @@
 use crate::error_mapper::ErrorMapperTrait;
 use crate::interface::{
-    GenerationError, HistoryRepositoryTrait, UnitOfWorkFactoryTrait, UnitOfWorkTrait,
+    GenerationError, MeasurementRepositoryTrait, UnitOfWorkFactoryTrait, UnitOfWorkTrait,
 };
-use layer_domain::entity::HistoryEntity;
+use layer_domain::entity::MeasurementEntity;
 use std::marker::PhantomData;
 
-pub struct HistoryUseCase<
+pub struct MeasurementUseCase<
     Tx,
     U: UnitOfWorkTrait<Tx>,
     F: UnitOfWorkFactoryTrait<Tx, U>,
-    R: HistoryRepositoryTrait<Tx>,
+    R: MeasurementRepositoryTrait<Tx>,
 > {
     repo: R,
     factory: F,
@@ -17,13 +17,21 @@ pub struct HistoryUseCase<
     _marker1: PhantomData<U>,
 }
 
-impl<Tx, U: UnitOfWorkTrait<Tx>, F: UnitOfWorkFactoryTrait<Tx, U>, R: HistoryRepositoryTrait<Tx>>
-    ErrorMapperTrait for HistoryUseCase<Tx, U, F, R>
+impl<
+    Tx,
+    U: UnitOfWorkTrait<Tx>,
+    F: UnitOfWorkFactoryTrait<Tx, U>,
+    R: MeasurementRepositoryTrait<Tx>,
+> ErrorMapperTrait for MeasurementUseCase<Tx, U, F, R>
 {
 }
 
-impl<Tx, U: UnitOfWorkTrait<Tx>, F: UnitOfWorkFactoryTrait<Tx, U>, R: HistoryRepositoryTrait<Tx>>
-    HistoryUseCase<Tx, U, F, R>
+impl<
+    Tx,
+    U: UnitOfWorkTrait<Tx>,
+    F: UnitOfWorkFactoryTrait<Tx, U>,
+    R: MeasurementRepositoryTrait<Tx>,
+> MeasurementUseCase<Tx, U, F, R>
 {
     pub fn new(repo: R, factory: F) -> Self {
         Self {
@@ -34,7 +42,7 @@ impl<Tx, U: UnitOfWorkTrait<Tx>, F: UnitOfWorkFactoryTrait<Tx, U>, R: HistoryRep
         }
     }
 
-    pub async fn create(self, histories: Vec<HistoryEntity>) -> Result<(), GenerationError> {
+    pub async fn create(self, histories: Vec<MeasurementEntity>) -> Result<(), GenerationError> {
         let uow = self.factory.begin().await.map_err(Self::map_db_err)?;
         match self.repo.add(uow.ref_tx(), histories).await {
             Ok(()) => {
@@ -48,11 +56,11 @@ impl<Tx, U: UnitOfWorkTrait<Tx>, F: UnitOfWorkFactoryTrait<Tx, U>, R: HistoryRep
         }
     }
 
-    pub async fn get(self, id: i64) -> Result<Option<HistoryEntity>, GenerationError> {
+    pub async fn get(self, id: i64) -> Result<Option<MeasurementEntity>, GenerationError> {
         let uow = self.factory.begin().await.map_err(Self::map_db_err)?;
-        let history = self.repo.get(uow.ref_tx(), id.into()).await?;
+        let measurement = self.repo.get(uow.ref_tx(), id.into()).await?;
 
-        match history {
+        match measurement {
             Some(history) => Ok(Some(history.into())),
             None => Ok(None),
         }

@@ -1,9 +1,9 @@
 use super::errors::GenerationError;
-use layer_domain::entity::HistoryEntity;
+use layer_domain::entity::MeasurementEntity;
 
 /// 発電状況を記録するためのリポジトリインターフェース
 #[async_trait::async_trait]
-pub trait HistoryRepositoryTrait<Tx> {
+pub trait MeasurementRepositoryTrait<Tx> {
     /// 発電状況を記録する
     ///
     /// # Arguments
@@ -13,7 +13,7 @@ pub trait HistoryRepositoryTrait<Tx> {
     /// * `Result<(), GenerationRepositoryError>` - 成功時は空タプルを返し、失敗時はエラーを返す
     /// # Errors
     /// * `GenerationRepositoryError` - 記録に失敗した場合のエラー
-    async fn add(&self, tx: &Tx, histories: Vec<HistoryEntity>) -> Result<(), GenerationError>;
+    async fn add(&self, tx: &Tx, histories: Vec<MeasurementEntity>) -> Result<(), GenerationError>;
 
     /// 発電状況を取得する
     ///
@@ -24,7 +24,7 @@ pub trait HistoryRepositoryTrait<Tx> {
     /// * `Result<Option<HistoryEntity>, GenerationRepositoryError>` - 成功時は発電状況のエンティティを返し、失敗時はエラーを返す
     /// # Errors
     /// * `GenerationRepositoryError` - 取得に失敗した場合のエラー
-    async fn get(&self, tx: &Tx, id: i64) -> Result<Option<HistoryEntity>, GenerationError>;
+    async fn get(&self, tx: &Tx, id: i64) -> Result<Option<MeasurementEntity>, GenerationError>;
 
     /// 発電状況を削除する
     ///

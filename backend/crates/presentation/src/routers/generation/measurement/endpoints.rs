@@ -1,6 +1,6 @@
 use super::{
-    get::{HistoryItem, HistoryRangeQuery, Response as GetResponse},
-    post::HistoryPostRequest,
+    get::{MeasurementItem, MeasurementRangeQuery, Response as GetResponse},
+    post::PostMeasurementRequest,
 };
 use crate::{error_mapper::ErrorMapperTrait, errors::ErrorResponse, routers::RouterState};
 use axum::{
@@ -8,31 +8,33 @@ use axum::{
     extract::{Path, Query, State},
     http::StatusCode,
 };
-use layer_infra::{repository::history::HistoryRepository, unit_of_work::UnitOfWorkFactory};
-use layer_use_case::history::HistoryUseCase;
+use layer_infra::{
+    repository::measurement::MeasurementRepository, unit_of_work::UnitOfWorkFactory,
+};
+use layer_use_case::measurement::MeasurementUseCase;
 
 struct ErrorMapper {}
 impl ErrorMapperTrait for ErrorMapper {}
 
 #[utoipa::path(
     post,
-    tag = "Generation - History",
-    description = "Create a new history record",
-    path = "/generation/histories",
-    request_body = HistoryPostRequest,
+    tag = "Generation - Measurement",
+    description = "Create a new measurement record",
+    path = "/generation/measurements",
+    request_body = PostMeasurementRequest,
     responses(
         (status = 201, description = "OK"),
         (status = 400, description = "Bad request", body = ErrorResponse),
         (status = 500, description = "Internal Error", body = ErrorResponse)
     )
 )]
-pub async fn post_histories(
+pub async fn post_measurements(
     State(state): State<RouterState>,
-    Json(body): Json<HistoryPostRequest>,
+    Json(body): Json<PostMeasurementRequest>,
 ) -> Result<StatusCode, (StatusCode, Json<ErrorResponse>)> {
-    let repo = HistoryRepository {};
+    let repo = MeasurementRepository {};
     let factory = UnitOfWorkFactory::new(state.db.clone());
-    let use_case = HistoryUseCase::new(repo, factory);
+    let use_case = MeasurementUseCase::new(repo, factory);
     let created = use_case
         .create(body.try_into().map_err(ErrorMapper::map_to_bad_request)?)
         .await;
@@ -50,45 +52,45 @@ pub async fn post_histories(
 
 #[utoipa::path(
     get,
-    tag = "Generation - History",
-    description = "Get a history record by id",
-    path = "/generation/histories/{id}",
-    params(("id" = i64, Path, description = "History id")),
+    tag = "Generation - Measurement",
+    description = "Get a measurement record by id",
+    path = "/generation/measurements/{id}",
+    params(("id" = i64, Path, description = "Measurement id")),
     responses(
         (status = 200, description = "OK", body = GetResponse),
         (status = 404, description = "Not Found", body = ErrorResponse),
         (status = 500, description = "Internal Error", body = ErrorResponse)
     )
 )]
-pub async fn get_history(
+pub async fn get_measurement(
     State(state): State<RouterState>,
     Path(id): Path<i64>,
 ) -> Result<(StatusCode, Json<GetResponse>), (StatusCode, Json<ErrorResponse>)> {
-    let repo = HistoryRepository {};
+    let repo = MeasurementRepository {};
     let factory = UnitOfWorkFactory::new(state.db.clone());
-    let use_case = HistoryUseCase::new(repo, factory);
-    let history = use_case
+    let use_case = MeasurementUseCase::new(repo, factory);
+    let measurement = use_case
         .get(id)
         .await
         .map_err(ErrorMapper::map_generation_error)?;
 
-    match history {
-        Some(history) => Ok((
+    match measurement {
+        Some(measurement) => Ok((
             StatusCode::OK,
             Json(GetResponse {
-                sub_system: history.sub_system,
-                label: history.label,
-                values: vec![HistoryItem {
-                    value: history.value,
-                    unit: history.unit.to_string(),
-                    monitored_at: history.monitored_at,
+                sub_system: measurement.sub_system,
+                label: measurement.label,
+                values: vec![MeasurementItem {
+                    value: measurement.value,
+                    unit: measurement.unit.to_string(),
+                    monitored_at: measurement.monitored_at,
                 }],
             }),
         )),
         None => Err((
             StatusCode::NOT_FOUND,
             Json(ErrorResponse {
-                message: "History record not found".to_string(),
+                message: "Measurement record not found".to_string(),
             }),
         )),
     }
@@ -96,24 +98,24 @@ pub async fn get_history(
 
 #[utoipa::path(
     get,
-    tag = "Generation - History",
-    description = "Get history records with date time range",
-    path = "/generation/histories",
-    params(HistoryRangeQuery),
+    tag = "Generation - Measurement",
+    description = "Get measurement records with date time range",
+    path = "/generation/measurements",
+    params(MeasurementRangeQuery),
     responses(
         (status = 200, description = "OK", body = GetResponse),
         (status = 404, description = "Not Found", body = ErrorResponse),
         (status = 500, description = "Internal Error", body = ErrorResponse)
     )
 )]
-pub async fn get_histories_with_range(
+pub async fn get_measurements_with_range(
     State(state): State<RouterState>,
-    Query(query): Query<HistoryRangeQuery>,
+    Query(query): Query<MeasurementRangeQuery>,
 ) -> Result<(StatusCode, Json<GetResponse>), (StatusCode, Json<ErrorResponse>)> {
-    let repo = HistoryRepository {};
+    let repo = MeasurementRepository {};
     let factory = UnitOfWorkFactory::new(state.db.clone());
-    let use_case = HistoryUseCase::new(repo, factory);
-    // let history = use_case
+    let use_case = MeasurementUseCase::new(repo, factory);
+    // let measurement = use_case
     //     .get(id)
     //     .await
     //     .map_err(ErrorMapper::map_generation_error)?;
@@ -121,7 +123,7 @@ pub async fn get_histories_with_range(
     Err((
         StatusCode::NOT_FOUND,
         Json(ErrorResponse {
-            message: "History record not found".to_string(),
+            message: "Measurement record not found".to_string(),
         }),
     ))
 }

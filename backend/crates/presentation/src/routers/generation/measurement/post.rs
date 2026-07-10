@@ -1,10 +1,10 @@
 use chrono::{DateTime, Utc};
-use layer_domain::{entity::HistoryEntity, value_object::UnitError};
+use layer_domain::{entity::MeasurementEntity, value_object::UnitError};
 use serde::Deserialize;
 use utoipa::ToSchema;
 
 #[derive(Deserialize, ToSchema)]
-pub struct HistoryItem {
+pub struct MeasurementValue {
     /// 物理量の値
     pub value: f32,
     /// 物理量の単位(e.g. V, A, Wh, ...)
@@ -16,22 +16,22 @@ pub struct HistoryItem {
 }
 
 #[derive(Deserialize, ToSchema)]
-pub struct HistoryPostRequest {
+pub struct PostMeasurementRequest {
     /// 発電状況の計測値
-    pub data: Vec<HistoryItem>,
+    pub values: Vec<MeasurementValue>,
     /// 発電状況の計測日時
     pub monitored_at: DateTime<Utc>,
 }
 
-impl TryFrom<HistoryPostRequest> for Vec<HistoryEntity> {
+impl TryFrom<PostMeasurementRequest> for Vec<MeasurementEntity> {
     type Error = UnitError;
 
-    fn try_from(input: HistoryPostRequest) -> Result<Self, Self::Error> {
+    fn try_from(input: PostMeasurementRequest) -> Result<Self, Self::Error> {
         input
-            .data
+            .values
             .into_iter()
             .map(|item| {
-                Ok(HistoryEntity {
+                Ok(MeasurementEntity {
                     value: item.value,
                     unit: item.unit.try_into()?,
                     sub_system: item.sub_system,
@@ -39,6 +39,6 @@ impl TryFrom<HistoryPostRequest> for Vec<HistoryEntity> {
                     monitored_at: input.monitored_at,
                 })
             })
-            .collect::<Result<Vec<HistoryEntity>, Self::Error>>()
+            .collect::<Result<Vec<MeasurementEntity>, Self::Error>>()
     }
 }

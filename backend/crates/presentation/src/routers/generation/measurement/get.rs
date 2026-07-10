@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 
 #[derive(serde::Deserialize, utoipa::IntoParams)]
-pub struct HistoryRangeQuery {
+pub struct MeasurementRangeQuery {
     /// Date time measured from
     #[param(example = "2026-06-26T12:34:56Z")]
     pub from: DateTime<Utc>,
@@ -11,7 +11,7 @@ pub struct HistoryRangeQuery {
 }
 
 #[derive(serde::Serialize, utoipa::ToSchema)]
-pub struct HistoryItem {
+pub struct MeasurementItem {
     /// 物理量
     pub value: f32,
     /// 物理量の単位(e.g. V, A, Wh, ...)
@@ -27,5 +27,5 @@ pub struct Response {
     /// 発電状況のラベル(e.g. バッテリ電圧, パネル出力電流, 風車回転数, ...)
     pub label: String,
     /// 物理量の値と計測日時
-    pub values: Vec<HistoryItem>,
+    pub values: Vec<MeasurementItem>,
 }
