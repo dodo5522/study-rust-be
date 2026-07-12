@@ -1,4 +1,4 @@
-use crate::iden::generation::Groups;
+use crate::iden::Group;
 use crate::sea_orm::{DbBackend, Statement};
 use sea_orm_migration::{prelude::*, schema::*};
 
@@ -11,12 +11,12 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table((Groups::Schema, Groups::Table))
+                    .table((Group::Schema, Group::Table))
                     .if_not_exists()
-                    .col(string(Groups::Group).primary_key())
-                    .col(string(Groups::Remark).not_null().default(""))
+                    .col(string(Group::Group).primary_key())
+                    .col(string(Group::Remark).not_null().default(""))
                     .col(
-                        timestamp_with_time_zone(Groups::CreatedAt)
+                        timestamp_with_time_zone(Group::CreatedAt)
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
@@ -24,11 +24,7 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        let table = format!(
-            "{}.{}",
-            Groups::Schema.to_string(),
-            Groups::Table.to_string()
-        );
+        let table = format!("{}.{}", Group::Schema.to_string(), Group::Table.to_string());
         manager
             .get_connection()
             .execute(Statement::from_string(
@@ -36,7 +32,7 @@ impl MigrationTrait for Migration {
                 format!(
                     "COMMENT ON COLUMN {}.{} IS 'グループ (e.g. Array, Battery, ...)';",
                     table,
-                    Groups::Group.to_string()
+                    Group::Group.to_string()
                 ),
             ))
             .await?;
@@ -48,7 +44,7 @@ impl MigrationTrait for Migration {
         manager
             .drop_table(
                 Table::drop()
-                    .table((Groups::Schema, Groups::Table))
+                    .table((Group::Schema, Group::Table))
                     .to_owned(),
             )
             .await

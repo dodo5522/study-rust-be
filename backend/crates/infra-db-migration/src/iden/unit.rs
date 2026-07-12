@@ -1,23 +1,23 @@
-use crate::iden::SCHEMA_GENERATION;
+use crate::schemas::GENERATION;
 use sea_orm_migration::prelude::Iden;
 
-pub enum Groups {
+pub enum Unit {
     Schema,
     Table,
-    Group,
+    Unit,
     Remark,
     CreatedAt,
 }
 
-impl Iden for Groups {
+impl Iden for Unit {
     fn unquoted(&self, s: &mut dyn std::fmt::Write) {
         write!(
             s,
             "{}",
             match self {
-                Self::Schema => SCHEMA_GENERATION,
-                Self::Table => "groups",
-                Self::Group => "group",
+                Self::Schema => GENERATION,
+                Self::Table => "units",
+                Self::Unit => "unit",
                 Self::Remark => "remark",
                 Self::CreatedAt => "created_at",
             }

@@ -1,4 +1,4 @@
-use crate::iden::generation::Labels;
+use crate::iden::Label;
 use sea_orm::{DbBackend, Statement};
 use sea_orm_migration::{prelude::*, schema::*};
 
@@ -11,12 +11,12 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table((Labels::Schema, Labels::Table))
+                    .table((Label::Schema, Label::Table))
                     .if_not_exists()
-                    .col(string(Labels::Label).primary_key())
-                    .col(string(Labels::Remark).not_null().default(""))
+                    .col(string(Label::Label).primary_key())
+                    .col(string(Label::Remark).not_null().default(""))
                     .col(
-                        timestamp_with_time_zone(Labels::CreatedAt)
+                        timestamp_with_time_zone(Label::CreatedAt)
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
@@ -24,11 +24,7 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        let table = format!(
-            "{}.{}",
-            Labels::Schema.to_string(),
-            Labels::Table.to_string()
-        );
+        let table = format!("{}.{}", Label::Schema.to_string(), Label::Table.to_string());
         manager
             .get_connection()
             .execute(Statement::from_string(
@@ -36,7 +32,7 @@ impl MigrationTrait for Migration {
                 format!(
                     "COMMENT ON COLUMN {}.{} IS 'ラベル (e.g. Array Voltage, ...)';",
                     table,
-                    Labels::Label.to_string()
+                    Label::Label.to_string()
                 ),
             ))
             .await?;
@@ -48,7 +44,7 @@ impl MigrationTrait for Migration {
         manager
             .drop_table(
                 Table::drop()
-                    .table((Labels::Schema, Labels::Table))
+                    .table((Label::Schema, Label::Table))
                     .to_owned(),
             )
             .await

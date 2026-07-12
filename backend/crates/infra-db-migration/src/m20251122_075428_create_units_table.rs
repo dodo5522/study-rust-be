@@ -1,4 +1,4 @@
-use crate::iden::generation::{Groups, Units};
+use crate::iden::{Group, Unit};
 use crate::sea_orm::{DbBackend, Statement};
 use sea_orm_migration::{prelude::*, schema::*};
 
@@ -11,12 +11,12 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table((Units::Schema, Units::Table))
+                    .table((Unit::Schema, Unit::Table))
                     .if_not_exists()
-                    .col(string(Units::Unit).primary_key())
-                    .col(string(Groups::Remark).not_null().default(""))
+                    .col(string(Unit::Unit).primary_key())
+                    .col(string(Group::Remark).not_null().default(""))
                     .col(
-                        timestamp_with_time_zone(Units::CreatedAt)
+                        timestamp_with_time_zone(Unit::CreatedAt)
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
@@ -24,7 +24,7 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        let table = format!("{}.{}", Units::Schema.to_string(), Units::Table.to_string());
+        let table = format!("{}.{}", Unit::Schema.to_string(), Unit::Table.to_string());
         manager
             .get_connection()
             .execute(Statement::from_string(
@@ -32,7 +32,7 @@ impl MigrationTrait for Migration {
                 format!(
                     "COMMENT ON COLUMN {}.{} IS '単位 (e.g. kWh, V, A, ...)';",
                     table,
-                    Units::Unit.to_string()
+                    Unit::Unit.to_string()
                 ),
             ))
             .await?;
@@ -42,11 +42,7 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(
-                Table::drop()
-                    .table((Units::Schema, Units::Table))
-                    .to_owned(),
-            )
+            .drop_table(Table::drop().table((Unit::Schema, Unit::Table)).to_owned())
             .await
     }
 }

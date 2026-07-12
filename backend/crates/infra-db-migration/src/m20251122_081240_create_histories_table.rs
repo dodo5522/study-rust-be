@@ -1,4 +1,4 @@
-use crate::iden::generation::{Groups, Histories, Labels, Units};
+use crate::iden::{Group, History, Label, Unit};
 use crate::sea_orm::{DbBackend, Statement};
 use sea_orm_migration::{prelude::*, schema::*};
 
@@ -11,48 +11,48 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table((Histories::Schema, Histories::Table))
+                    .table((History::Schema, History::Table))
                     .if_not_exists()
-                    .col(big_integer(Histories::Id).primary_key().auto_increment())
-                    .col(string(Histories::Group).not_null())
-                    .col(string(Histories::Label).not_null())
-                    .col(string(Histories::Unit).not_null())
-                    .col(float(Histories::Value).not_null())
-                    .col(string(Histories::Remark).not_null().default(""))
+                    .col(big_integer(History::Id).primary_key().auto_increment())
+                    .col(string(History::Group).not_null())
+                    .col(string(History::Label).not_null())
+                    .col(string(History::Unit).not_null())
+                    .col(float(History::Value).not_null())
+                    .col(string(History::Remark).not_null().default(""))
                     .col(
-                        timestamp_with_time_zone(Histories::MonitoredAt)
+                        timestamp_with_time_zone(History::MonitoredAt)
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
                     .col(
-                        timestamp_with_time_zone(Histories::CreatedAt)
+                        timestamp_with_time_zone(History::CreatedAt)
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
                     .col(
-                        timestamp_with_time_zone(Histories::UpdatedAt)
+                        timestamp_with_time_zone(History::UpdatedAt)
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk-histories-group")
-                            .from((Histories::Schema, Histories::Table), Histories::Group)
-                            .to((Groups::Schema, Groups::Table), Groups::Group)
+                            .from((History::Schema, History::Table), History::Group)
+                            .to((Group::Schema, Group::Table), Group::Group)
                             .on_delete(ForeignKeyAction::Restrict),
                     )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk-histories-label")
-                            .from((Histories::Schema, Histories::Table), Histories::Label)
-                            .to((Labels::Schema, Labels::Table), Labels::Label)
+                            .from((History::Schema, History::Table), History::Label)
+                            .to((Label::Schema, Label::Table), Label::Label)
                             .on_delete(ForeignKeyAction::Restrict),
                     )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk-histories-unit")
-                            .from((Histories::Schema, Histories::Table), Histories::Unit)
-                            .to((Units::Schema, Units::Table), Units::Unit)
+                            .from((History::Schema, History::Table), History::Unit)
+                            .to((Unit::Schema, Unit::Table), Unit::Unit)
                             .on_delete(ForeignKeyAction::Restrict),
                     )
                     .to_owned(),
@@ -61,8 +61,8 @@ impl MigrationTrait for Migration {
 
         let table = format!(
             "{}.{}",
-            Histories::Schema.to_string(),
-            Histories::Table.to_string()
+            History::Schema.to_string(),
+            History::Table.to_string()
         );
         manager
             .get_connection()
@@ -71,7 +71,7 @@ impl MigrationTrait for Migration {
                 format!(
                     "COMMENT ON COLUMN {}.{} IS 'グループ';",
                     table,
-                    Histories::Group.to_string()
+                    History::Group.to_string()
                 ),
             ))
             .await?;
@@ -82,7 +82,7 @@ impl MigrationTrait for Migration {
                 format!(
                     "COMMENT ON COLUMN {}.{} IS 'ラベル';",
                     table,
-                    Histories::Label.to_string()
+                    History::Label.to_string()
                 ),
             ))
             .await?;
@@ -93,7 +93,7 @@ impl MigrationTrait for Migration {
                 format!(
                     "COMMENT ON COLUMN {}.{} IS '単位';",
                     table,
-                    Histories::Unit.to_string()
+                    History::Unit.to_string()
                 ),
             ))
             .await?;
@@ -104,7 +104,7 @@ impl MigrationTrait for Migration {
                 format!(
                     "COMMENT ON COLUMN {}.{} IS '値';",
                     table,
-                    Histories::Value.to_string()
+                    History::Value.to_string()
                 ),
             ))
             .await?;
@@ -115,7 +115,7 @@ impl MigrationTrait for Migration {
                 format!(
                     "COMMENT ON COLUMN {}.{} IS '観測日時';",
                     table,
-                    Histories::MonitoredAt.to_string()
+                    History::MonitoredAt.to_string()
                 ),
             ))
             .await?;
@@ -140,7 +140,7 @@ impl MigrationTrait for Migration {
         manager
             .drop_table(
                 Table::drop()
-                    .table((Histories::Schema, Histories::Table))
+                    .table((History::Schema, History::Table))
                     .to_owned(),
             )
             .await

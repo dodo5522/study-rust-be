@@ -1,7 +1,7 @@
-use crate::iden::SCHEMA_GENERATION;
+use crate::schemas::GENERATION;
 use sea_orm_migration::prelude::Iden;
 
-pub enum Histories {
+pub enum History {
     Schema,
     Table,
     Id,
@@ -15,13 +15,13 @@ pub enum Histories {
     UpdatedAt,
 }
 
-impl Iden for Histories {
+impl Iden for History {
     fn unquoted(&self, s: &mut dyn std::fmt::Write) {
         write!(
             s,
             "{}",
             match self {
-                Self::Schema => SCHEMA_GENERATION,
+                Self::Schema => GENERATION,
                 Self::Table => "histories",
                 Self::Id => "id",
                 Self::Group => "group",
