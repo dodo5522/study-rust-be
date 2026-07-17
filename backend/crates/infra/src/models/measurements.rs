@@ -3,31 +3,23 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
-#[sea_orm(schema_name = "generation", table_name = "histories")]
+#[sea_orm(schema_name = "generation", table_name = "measurements")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
-    pub group: String,
+    pub sub_system: String,
     pub label: String,
     pub unit: String,
     #[sea_orm(column_type = "Float")]
     pub value: f32,
     pub remark: String,
-    pub monitored_at: DateTimeWithTimeZone,
+    pub measured_at: DateTimeWithTimeZone,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(
-        belongs_to = "super::groups::Entity",
-        from = "Column::Group",
-        to = "super::groups::Column::Group",
-        on_update = "NoAction",
-        on_delete = "Restrict"
-    )]
-    Groups,
     #[sea_orm(
         belongs_to = "super::labels::Entity",
         from = "Column::Label",
@@ -36,6 +28,14 @@ pub enum Relation {
         on_delete = "Restrict"
     )]
     Labels,
+    #[sea_orm(
+        belongs_to = "super::sub_systems::Entity",
+        from = "Column::SubSystem",
+        to = "super::sub_systems::Column::SubSystem",
+        on_update = "NoAction",
+        on_delete = "Restrict"
+    )]
+    SubSystems,
     #[sea_orm(
         belongs_to = "super::units::Entity",
         from = "Column::Unit",
@@ -46,15 +46,15 @@ pub enum Relation {
     Units,
 }
 
-impl Related<super::groups::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Groups.def()
-    }
-}
-
 impl Related<super::labels::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Labels.def()
+    }
+}
+
+impl Related<super::sub_systems::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::SubSystems.def()
     }
 }
 

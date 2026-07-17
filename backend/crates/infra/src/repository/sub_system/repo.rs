@@ -1,6 +1,6 @@
 use crate::{
     error_mapper::ErrorMapperTrait,
-    models::{groups::ActiveModel, prelude::Groups},
+    models::{prelude::SubSystems, sub_systems::ActiveModel},
 };
 use layer_domain::entity::SubSystemEntity;
 use layer_use_case::interface::{GenerationError, SubSystemRepositoryTrait};
@@ -18,7 +18,7 @@ impl SubSystemRepositoryTrait<DatabaseTransaction> for SubSystemRepository {
         new: &SubSystemEntity,
     ) -> Result<(), GenerationError> {
         let group: ActiveModel = new.into();
-        let res = Groups::insert(group)
+        let res = SubSystems::insert(group)
             .exec(tx)
             .await
             .map_err(Self::map_db_to_generation_error)?;
@@ -31,7 +31,7 @@ impl SubSystemRepositoryTrait<DatabaseTransaction> for SubSystemRepository {
         sub_system: Option<impl AsRef<str> + Send>,
     ) -> Result<Vec<SubSystemEntity>, GenerationError> {
         if let Some(sub_system) = sub_system {
-            let found = Groups::find_by_id(sub_system.as_ref().to_string())
+            let found = SubSystems::find_by_id(sub_system.as_ref().to_string())
                 .one(tx)
                 .await
                 .map_err(Self::map_db_to_generation_error)?;
@@ -42,7 +42,7 @@ impl SubSystemRepositoryTrait<DatabaseTransaction> for SubSystemRepository {
                 Ok(vec![])
             }
         } else {
-            let founds = Groups::find()
+            let founds = SubSystems::find()
                 .all(tx)
                 .await
                 .map_err(Self::map_db_to_generation_error)?;
@@ -59,7 +59,7 @@ impl SubSystemRepositoryTrait<DatabaseTransaction> for SubSystemRepository {
         tx: &DatabaseTransaction,
         e: &SubSystemEntity,
     ) -> Result<SubSystemEntity, GenerationError> {
-        let result = Groups::update::<ActiveModel>(e.into())
+        let result = SubSystems::update::<ActiveModel>(e.into())
             .exec(tx)
             .await
             .map_err(Self::map_db_to_generation_error)?;
@@ -71,7 +71,7 @@ impl SubSystemRepositoryTrait<DatabaseTransaction> for SubSystemRepository {
         tx: &DatabaseTransaction,
         sub_system: impl AsRef<str> + Send,
     ) -> Result<(), GenerationError> {
-        let result = Groups::delete_by_id(sub_system.as_ref().to_string())
+        let result = SubSystems::delete_by_id(sub_system.as_ref().to_string())
             .exec(tx)
             .await
             .map_err(Self::map_db_to_generation_error)?;

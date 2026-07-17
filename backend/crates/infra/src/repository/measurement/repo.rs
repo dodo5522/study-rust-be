@@ -1,6 +1,6 @@
 use crate::{
     error_mapper::ErrorMapperTrait,
-    models::{histories::ActiveModel, prelude::Histories},
+    models::{measurements::ActiveModel, prelude::Measurements},
 };
 use layer_domain::entity::MeasurementEntity;
 use layer_use_case::interface::{GenerationError, MeasurementRepositoryTrait};
@@ -15,21 +15,21 @@ impl MeasurementRepositoryTrait<DatabaseTransaction> for MeasurementRepository {
     async fn add(
         &self,
         tx: &DatabaseTransaction,
-        histories: Vec<MeasurementEntity>,
+        measurements: Vec<MeasurementEntity>,
     ) -> Result<(), GenerationError> {
-        let histories = histories
+        let measurements = measurements
             .into_iter()
             .map(|new| ActiveModel {
                 unit: ActiveValue::Set(new.unit.into()),
-                group: ActiveValue::Set(new.sub_system),
+                sub_system: ActiveValue::Set(new.sub_system),
                 label: ActiveValue::Set(new.label),
                 value: ActiveValue::Set(new.value),
-                monitored_at: ActiveValue::Set(new.monitored_at.into()),
+                measured_at: ActiveValue::Set(new.monitored_at.into()),
                 ..Default::default()
             })
             .collect::<Vec<ActiveModel>>();
 
-        let _ = Histories::insert_many(histories)
+        let _ = Measurements::insert_many(measurements)
             .exec(tx)
             .await
             .map_err(Self::map_db_to_generation_error)?;
@@ -42,22 +42,22 @@ impl MeasurementRepositoryTrait<DatabaseTransaction> for MeasurementRepository {
         tx: &DatabaseTransaction,
         id: i64,
     ) -> Result<Option<MeasurementEntity>, GenerationError> {
-        let h = Histories::find_by_id::<i64>(id.into())
+        let h = Measurements::find_by_id::<i64>(id.into())
             .one(tx)
             .await
             .map_err(Self::map_db_to_generation_error)?;
 
-        if let Some(history) = h {
+        if let Some(measurement) = h {
             Ok(Some(MeasurementEntity {
-                value: history.value,
-                unit: history
+                value: measurement.value,
+                unit: measurement
                     .unit
                     .clone()
                     .try_into()
-                    .map_err(|_| Self::map_invalid_unit(history.unit))?,
-                sub_system: history.group,
-                label: history.label,
-                monitored_at: history.monitored_at.into(),
+                    .map_err(|_| Self::map_invalid_unit(measurement.unit))?,
+                sub_system: measurement.sub_system,
+                label: measurement.label,
+                monitored_at: measurement.measured_at.into(),
             }))
         } else {
             Ok(None)

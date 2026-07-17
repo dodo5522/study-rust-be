@@ -2,7 +2,7 @@
 
 pub mod prelude;
 
-pub mod groups;
-pub mod histories;
 pub mod labels;
+pub mod measurements;
+pub mod sub_systems;
 pub mod units;

@@ -3,23 +3,23 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(schema_name = "generation", table_name = "groups")]
+#[sea_orm(schema_name = "generation", table_name = "sub_systems")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
-    pub group: String,
+    pub sub_system: String,
     pub remark: String,
     pub created_at: DateTimeWithTimeZone,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::histories::Entity")]
-    Histories,
+    #[sea_orm(has_many = "super::measurements::Entity")]
+    Measurements,
 }
 
-impl Related<super::histories::Entity> for Entity {
+impl Related<super::measurements::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Histories.def()
+        Relation::Measurements.def()
     }
 }
 
