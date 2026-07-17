@@ -1,3 +1,7 @@
+use crate::helpers::{
+    group::{create_groups_table, drop_groups_table},
+    history::{create_histories_table, drop_histories_table},
+};
 use crate::iden::{Label, Measurement, SubSystem, Unit};
 use crate::sea_orm::{DbBackend, Statement};
 use sea_orm_migration::{prelude::*, schema::*};
@@ -60,7 +64,7 @@ impl Migration {
         Ok(())
     }
 
-    async fn delete_sub_systems_table<'c>(&self, manager: &SchemaManager<'c>) -> Result<(), DbErr> {
+    async fn drop_sub_systems_table<'c>(&self, manager: &SchemaManager<'c>) -> Result<(), DbErr> {
         manager
             .drop_table(
                 Table::drop()
@@ -209,7 +213,7 @@ impl Migration {
         Ok(())
     }
 
-    async fn delete_measurements_table<'c>(
+    async fn drop_measurements_table<'c>(
         &'c self,
         manager: &SchemaManager<'c>,
     ) -> Result<(), DbErr> {
@@ -227,11 +231,15 @@ impl Migration {
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         self.create_sub_systems_table(manager).await?;
-        self.create_measurements_table(manager).await
+        self.create_measurements_table(manager).await?;
+        drop_histories_table(manager).await?;
+        drop_groups_table(manager).await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        self.delete_measurements_table(manager).await?;
-        self.delete_sub_systems_table(manager).await
+        create_groups_table(manager).await?;
+        create_histories_table(manager).await?;
+        self.drop_measurements_table(manager).await?;
+        self.drop_sub_systems_table(manager).await
     }
 }

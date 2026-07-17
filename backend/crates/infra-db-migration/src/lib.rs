@@ -1,6 +1,7 @@
 pub use sea_orm_migration::prelude::*;
 
 mod iden;
+pub(crate) mod helpers;
 mod m20251101_000002_create_updated_at_setter;
 mod m20251122_073958_create_groups_table;
 mod m20251122_075428_create_units_table;
