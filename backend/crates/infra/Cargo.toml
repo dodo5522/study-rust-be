@@ -6,8 +6,8 @@ edition.workspace = true
 [dependencies]
 async-trait.workspace = true
 sea-orm.workspace = true
-layer-domain = { path = "../domain" }
-layer-use-case = { path = "../use-case" }
+layer-domain.workspace = true
+layer-use-case.workspace = true
 
 [dev-dependencies]
 mockall.workspace = true
