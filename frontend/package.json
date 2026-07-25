@@ -1,5 +1,5 @@
 {
-  "name": "home-energy-manager",
+  "name": "energy-tracer",
   "engines": {
     "node": "24.10.0"
   },

@@ -1,4 +1,4 @@
-# Home Energy Manager Backend
+# Energy Tracer Backend
 
 `axum + utoipa + SeaORM` を使ったバックエンド API プロジェクトです。  
 Rust バックエンドのルートは `backend/` です。

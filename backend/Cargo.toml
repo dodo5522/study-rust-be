@@ -1,3 +1,8 @@
+[package]
+name = "energy-tracer"
+version.workspace = true
+edition.workspace = true
+
 [workspace]
 members = ["crates/*"]
 resolver = "2"
@@ -27,11 +32,6 @@ utoipa = { version = "5.4", features = ["axum_extras", "chrono"] }
 utoipa-swagger-ui = { version = "9.0", features = ["axum"] }
 utoipa-redoc = { version = "6.0", features = ["axum"] }
 uuid = { version = "1.18", features = ["serde", "v4"] }
-
-[package]
-name = "home-energy-manager"
-version.workspace = true
-edition.workspace = true
 
 [dependencies]
 layer-presentation = { path = "./crates/presentation" }
