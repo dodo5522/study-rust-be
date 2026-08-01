@@ -1,5 +1,5 @@
 use super::{
-    get::{MeasurementItem, MeasurementRangeQuery, Response as GetResponse},
+    get::{MeasurementFilter, Response as GetResponse},
     post::PostMeasurementRequest,
 };
 use crate::{error_mapper::ErrorMapperTrait, errors::ErrorResponse, routers::RouterState};
@@ -53,64 +53,18 @@ pub async fn post_measurements(
 #[utoipa::path(
     get,
     tag = "Generation - Measurement",
-    description = "Get a measurement record by id",
-    path = "/generation/measurements/{id}",
-    params(("id" = i64, Path, description = "Measurement id")),
-    responses(
-        (status = 200, description = "OK", body = GetResponse),
-        (status = 404, description = "Not Found", body = ErrorResponse),
-        (status = 500, description = "Internal Error", body = ErrorResponse)
-    )
-)]
-pub async fn get_measurement(
-    State(state): State<RouterState>,
-    Path(id): Path<i64>,
-) -> Result<(StatusCode, Json<GetResponse>), (StatusCode, Json<ErrorResponse>)> {
-    let repo = MeasurementRepository {};
-    let factory = UnitOfWorkFactory::new(state.db.clone());
-    let use_case = MeasurementUseCase::new(repo, factory);
-    let measurement = use_case
-        .get(id)
-        .await
-        .map_err(ErrorMapper::map_generation_error)?;
-
-    match measurement {
-        Some(measurement) => Ok((
-            StatusCode::OK,
-            Json(GetResponse {
-                sub_system: measurement.sub_system,
-                label: measurement.label,
-                values: vec![MeasurementItem {
-                    value: measurement.value,
-                    unit: measurement.unit.to_string(),
-                    monitored_at: measurement.monitored_at,
-                }],
-            }),
-        )),
-        None => Err((
-            StatusCode::NOT_FOUND,
-            Json(ErrorResponse {
-                message: "Measurement record not found".to_string(),
-            }),
-        )),
-    }
-}
-
-#[utoipa::path(
-    get,
-    tag = "Generation - Measurement",
-    description = "Get measurement records with date time range",
+    description = "Get measurements with the specified parameters",
     path = "/generation/measurements",
-    params(MeasurementRangeQuery),
+    params(MeasurementFilter),
     responses(
         (status = 200, description = "OK", body = GetResponse),
         (status = 404, description = "Not Found", body = ErrorResponse),
         (status = 500, description = "Internal Error", body = ErrorResponse)
     )
 )]
-pub async fn get_measurements_with_range(
+pub async fn get_measurements(
     State(state): State<RouterState>,
-    Query(query): Query<MeasurementRangeQuery>,
+    Query(filter): Query<MeasurementFilter>,
 ) -> Result<(StatusCode, Json<GetResponse>), (StatusCode, Json<ErrorResponse>)> {
     let repo = MeasurementRepository {};
     let factory = UnitOfWorkFactory::new(state.db.clone());
