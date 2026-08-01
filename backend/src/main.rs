@@ -1,4 +1,6 @@
-use layer_infra::{DatabaseConnector, DatabasePoolConfig, DatabaseUser, EnvConnector};
+use layer_infra::{
+    ApiEnvConnector, DatabaseConnector, DatabaseEnvConnector, DatabasePoolConfig, DatabaseUser,
+};
 use layer_presentation::route;
 
 #[tokio::main]
@@ -11,26 +13,27 @@ async fn main() {
 
 /// Run the application server.
 async fn run() -> anyhow::Result<()> {
-    let env = EnvConnector::new(DatabaseUser::Operator)?;
+    let api_env = ApiEnvConnector::new()?;
+    let db_env = DatabaseEnvConnector::new(DatabaseUser::Operator)?;
     let db_connector = DatabaseConnector::new(
-        env.db_user_name,
-        env.db_user_password,
-        env.db_host,
-        env.db_port,
-        env.db_name,
+        db_env.db_user_name,
+        db_env.db_user_password,
+        db_env.db_host,
+        db_env.db_port,
+        db_env.db_name,
         Some(DatabasePoolConfig {
-            max_connections: env.db_pool_max_connections,
-            min_connections: env.db_pool_min_connections,
-            connect_timeout_secs: env.db_pool_connect_timeout_secs,
-            acquire_timeout_secs: env.db_pool_acquire_timeout_secs,
-            idle_timeout_secs: env.db_pool_idle_timeout_secs,
-            max_lifetime_secs: env.db_pool_max_lifetime_secs,
+            max_connections: db_env.db_pool_max_connections,
+            min_connections: db_env.db_pool_min_connections,
+            connect_timeout_secs: db_env.db_pool_connect_timeout_secs,
+            acquire_timeout_secs: db_env.db_pool_acquire_timeout_secs,
+            idle_timeout_secs: db_env.db_pool_idle_timeout_secs,
+            max_lifetime_secs: db_env.db_pool_max_lifetime_secs,
         }),
     );
-    let address = format!("{}:{}", env.host_name_to_bind, env.port_to_bind);
+    let address = format!("{}:{}", api_env.host_name_to_bind, api_env.port_to_bind);
 
     #[allow(unused_mut)]
-    let mut allowed_origins: Vec<String> = env.allowed_origins;
+    let mut allowed_origins: Vec<String> = api_env.allowed_origins;
 
     #[cfg(feature = "allow-localhost-access")]
     {
