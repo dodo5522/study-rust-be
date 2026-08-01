@@ -45,22 +45,6 @@ impl Migration {
                 ),
             ))
             .await?;
-
-        manager
-            .get_connection()
-            .execute(Statement::from_string(
-                DbBackend::Postgres,
-                format!(
-                    r#"
-                    CREATE TRIGGER updated_at_setter
-                    BEFORE UPDATE ON {}
-                    FOR EACH ROW
-                    EXECUTE FUNCTION public.set_updated_at();
-                    "#,
-                    table
-                ),
-            ))
-            .await?;
         Ok(())
     }
 
