@@ -1,4 +1,4 @@
-FROM rust:1.90.0-slim-trixie
+FROM rust:1.96.1-slim-trixie
 WORKDIR /var/tmp/backend
 
 RUN apt update \

@@ -1,3 +1,8 @@
+[package]
+name = "energy-tracer"
+version.workspace = true
+edition.workspace = true
+
 [workspace]
 members = ["crates/*"]
 resolver = "2"
@@ -12,6 +17,9 @@ async-trait = "0.1.89"
 axum = "0.8.8"
 chrono = { version = "0.4.42", features = ["serde"] }
 chrono-tz = "0.10.4"
+layer-domain = { path = "./crates/domain" }
+layer-infra = { path = "./crates/infra" }
+layer-use-case = { path = "./crates/use-case" }
 mockall = "0.14.0"
 tokio = { version = "1.47.2", features = ["rt-multi-thread", "macros"] }
 sea-orm = { version = "=2.0.0-rc.32", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "with-chrono"] }
@@ -25,14 +33,9 @@ utoipa-swagger-ui = { version = "9.0", features = ["axum"] }
 utoipa-redoc = { version = "6.0", features = ["axum"] }
 uuid = { version = "1.18", features = ["serde", "v4"] }
 
-[package]
-name = "home-energy-manager"
-version.workspace = true
-edition.workspace = true
-
 [dependencies]
 layer-presentation = { path = "./crates/presentation" }
-layer-infra-db = { path = "./crates/infra-db" }
+layer-infra = { path = "crates/infra" }
 anyhow.workspace = true
 axum.workspace = true
 tokio.workspace = true

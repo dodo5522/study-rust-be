@@ -1,0 +1,15 @@
+[package]
+name = "layer-infra"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+async-trait.workspace = true
+sea-orm.workspace = true
+layer-domain.workspace = true
+layer-use-case.workspace = true
+
+[dev-dependencies]
+mockall.workspace = true
+rstest.workspace = true
+tokio.workspace = true
