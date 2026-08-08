@@ -8,12 +8,16 @@ pub trait MeasurementRepositoryTrait<Tx> {
     ///
     /// # Arguments
     /// * `tx` - データベーストランザクション
-    /// * `histories` - 新規登録する発電状況
+    /// * `measurements` - 新規登録する発電状況
     /// # Returns
     /// * `Result<(), GenerationRepositoryError>` - 成功時は空タプルを返し、失敗時はエラーを返す
     /// # Errors
     /// * `GenerationRepositoryError` - 記録に失敗した場合のエラー
-    async fn add(&self, tx: &Tx, histories: Vec<MeasurementEntity>) -> Result<(), GenerationError>;
+    async fn add(
+        &self,
+        tx: &Tx,
+        measurements: Vec<MeasurementEntity>,
+    ) -> Result<(), GenerationError>;
 
     /// 発電状況を取得する
     ///

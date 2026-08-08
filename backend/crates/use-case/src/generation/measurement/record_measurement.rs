@@ -5,7 +5,7 @@ use crate::interface::{
 use layer_domain::entity::MeasurementEntity;
 use std::marker::PhantomData;
 
-pub struct MeasurementUseCase<
+pub struct RecordMeasurementUseCase<
     Tx,
     U: UnitOfWorkTrait<Tx>,
     F: UnitOfWorkFactoryTrait<Tx, U>,
@@ -22,7 +22,7 @@ impl<
     U: UnitOfWorkTrait<Tx>,
     F: UnitOfWorkFactoryTrait<Tx, U>,
     R: MeasurementRepositoryTrait<Tx>,
-> ErrorMapperTrait for MeasurementUseCase<Tx, U, F, R>
+> ErrorMapperTrait for RecordMeasurementUseCase<Tx, U, F, R>
 {
 }
 
@@ -31,7 +31,7 @@ impl<
     U: UnitOfWorkTrait<Tx>,
     F: UnitOfWorkFactoryTrait<Tx, U>,
     R: MeasurementRepositoryTrait<Tx>,
-> MeasurementUseCase<Tx, U, F, R>
+> RecordMeasurementUseCase<Tx, U, F, R>
 {
     pub fn new(repo: R, factory: F) -> Self {
         Self {
@@ -42,9 +42,12 @@ impl<
         }
     }
 
-    pub async fn create(self, histories: Vec<MeasurementEntity>) -> Result<(), GenerationError> {
+    pub async fn execute(
+        self,
+        measurements: Vec<MeasurementEntity>,
+    ) -> Result<(), GenerationError> {
         let uow = self.factory.begin().await.map_err(Self::map_db_err)?;
-        match self.repo.add(uow.ref_tx(), histories).await {
+        match self.repo.add(uow.ref_tx(), measurements).await {
             Ok(()) => {
                 uow.commit().await.map_err(Self::map_db_err)?;
                 Ok(())
